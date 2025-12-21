@@ -93,6 +93,48 @@ services:
       - ${MOUNT_BASE_PATH}/data:/var/lib/opencloud
     restart: on-failure
 
+  collabora:
+    container_name: collabora
+    image: collabora/code:25.04.8.1.1
+    user: 568:568
+    entrypoint:
+      - /bin/sh
+      - -c
+    command:
+      - coolconfig generate-proof-key && /start-collabora-online.sh
+    cap_add:
+      - MKNOD
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9980/hosting/discovery" ]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+    ports:
+      - 9980:9980
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+    restart: unless-stopped
+    environment:
+      DONT_GEN_SSL_CERT: true
+      dictionaries: en_GB
+      aliasgroup1: https://wopi.starsystem.dev:443,https://cloud\.starsystem\.dev:443
+      server_name: office.starsystem.dev
+      username: ${COLLABORA_USERNAME}
+      password: ${COLLABORA_PASSWORD}
+      extra_params: |-
+        --o:welcome.enable=false 
+        --o:user_interface.mode=tabbed 
+        --o:ssl.termination=true 
+        --o:ssl.enable=false 
+        --o:home_mode.enable=true 
+        --o:num_prespawn_children=4 
+        --o:per_document.max_concurrency=8 
+        --o:overwrite_mode=false 
+        --o:net.frame_ancestors=cloud.starsystem.dev 
+        --o:net.lok_allow.host[14]=cloud.starsystem.dev
+
   wopi:
     container_name: opencloud-wopi
     image: opencloudeu/opencloud-rolling:latest
@@ -104,6 +146,8 @@ services:
       - opencloud collaboration server
     depends_on:
       opencloud:
+        condition: service_started
+      collabora:
         condition: service_started
     ports:
       - 9300:9300

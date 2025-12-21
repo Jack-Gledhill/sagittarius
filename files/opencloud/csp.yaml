@@ -12,6 +12,7 @@ directives:
     - '''self'''
   frame-ancestors:
     - '''self'''
+    - 'https://office.starsystem.dev/'
   frame-src:
     - '''self'''
     - 'blob:'
