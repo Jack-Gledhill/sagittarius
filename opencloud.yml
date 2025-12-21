@@ -1,0 +1,218 @@
+name: opencloud
+
+services:
+  tika:
+    container_name: tika
+    image: apache/tika:latest
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    restart: unless-stopped
+
+  clamav:
+    container_name: clamav
+    image: clamav/clamav:latest
+    environment:
+      CLAMD_CONF_StreamMaxLength: 50M
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+    volumes:
+      - /var/run/clamd.sock:/tmp/clamd.sock
+    restart: unless-stopped
+
+  ext-draw-io:
+    container_name: opencloud-draw-io
+    image: opencloudeu/web-extensions:draw-io-1.0.1
+    environment:
+      SOURCE_PATH: /usr/share/nginx/html/apps/draw-io
+      TARGET_PATH: /var/lib/opencloud/web/assets/apps
+    volumes:
+      - ${MOUNT_BASE_PATH}/data:/var/lib/opencloud
+    restart: on-failure
+
+  ext-external-sites:
+    container_name: opencloud-external-sites
+    image: opencloudeu/web-extensions:external-sites-1.3.0
+    environment:
+      SOURCE_PATH: /usr/share/nginx/html/apps/external-sites
+      TARGET_PATH: /var/lib/opencloud/web/assets/apps
+    volumes:
+      - ${MOUNT_BASE_PATH}/data:/var/lib/opencloud
+    restart: on-failure
+
+  ext-json-viewer:
+    container_name: opencloud-json-viewer
+    image: opencloudeu/web-extensions:json-viewer-1.0.2
+    environment:
+      SOURCE_PATH: /usr/share/nginx/html/apps/json-viewer
+      TARGET_PATH: /var/lib/opencloud/web/assets/apps
+    volumes:
+      - ${MOUNT_BASE_PATH}/data:/var/lib/opencloud
+    restart: on-failure
+
+  ext-maps:
+    container_name: opencloud-maps
+    image: opencloudeu/web-extensions:maps-1.0.2
+    environment:
+      SOURCE_PATH: /usr/share/nginx/html/apps/maps
+      TARGET_PATH: /var/lib/opencloud/web/assets/apps
+    volumes:
+      - ${MOUNT_BASE_PATH}/data:/var/lib/opencloud
+    restart: on-failure
+
+  ext-progress-bars:
+    container_name: opencloud-progress-bars
+    image: opencloudeu/web-extensions:progress-bars-1.1.0
+    environment:
+      SOURCE_PATH: /usr/share/nginx/html/apps/progress-bars
+      TARGET_PATH: /var/lib/opencloud/web/assets/apps
+    volumes:
+      - ${MOUNT_BASE_PATH}/data:/var/lib/opencloud
+    restart: on-failure
+
+  ext-unzip:
+    container_name: opencloud-unzip
+    image: opencloudeu/web-extensions:unzip-1.0.4
+    environment:
+      SOURCE_PATH: /usr/share/nginx/html/apps/unzip
+      TARGET_PATH: /var/lib/opencloud/web/assets/apps
+    volumes:
+      - ${MOUNT_BASE_PATH}/data:/var/lib/opencloud
+    restart: on-failure
+
+  opencloud:
+    container_name: opencloud
+    image: opencloudeu/opencloud-rolling:latest
+    entrypoint:
+      - /bin/sh
+    command:
+      - -c
+      - opencloud collaboration server
+    ports:
+      - 9200:9200
+    depends_on:
+      - clamav
+      - tika
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+    restart: unless-stopped
+    volumes:
+      - ${MOUNT_BASE_PATH}/config:/etc/opencloud
+      - ${MOUNT_BASE_PATH}/data:/var/lib/opencloud
+      - /var/run/clamd.sock:/var/run/clamd.sock
+    environment:
+      OC_URL: https://cloud.starsystem.dev
+      OC_MAX_CONCURRENCY: 4
+      OC_ADD_RUN_SERVICES: "antivirus,notifications,collaboration"
+      OC_EXCLUDE_RUN_SERVICES: idm # Disables internal LDAP server
+      OC_GATEWAY_GRPC_ADDR: 0.0.0.0:9142 # Exposes Reva Gateway for WOPI
+
+      OC_JWT_SECRET: ${OC_JWT_SECRET}
+      OC_TRANSFER_SECRET: ${OC_TRANSFER_SECRET}
+
+      OC_PERSISTENT_STORE: nats-js-kv
+      OC_CACHE_STORE: nats-js-kv
+      OC_CACHE_DISABLE_PERSISTENCE: false
+      NATS_NATS_HOST: 0.0.0.0 # Exposes NATS for WOPI
+      NATS_NATS_PORT: 9233
+      STORAGE_USERS_ID_CACHE_STORE: nats-js-kv
+
+      FRONTEND_CHECK_FOR_UPDATES: true
+      FRONTEND_ENABLE_FAVORITES: true
+      FRONTEND_CONFIGURABLE_NOTIFICATIONS: true
+      FRONTEND_GROUPWARE_ENABLED: true
+      FRONTEND_DISABLE_RADICALE: true
+
+      OC_INSECURE: false
+      PROXY_TLS: false
+      PROXY_ENABLE_BASIC_AUTH: false
+      PROXY_HTTP_ADDR: 0.0.0.0:9200 # Main web server
+      PROXY_DEBUG_ADDR: 0.0.0.0:9201 # Exposes metrics
+
+      OC_SHARING_PUBLIC_SHARE_MUST_HAVE_PASSWORD: false # Don't require passwords to share documents via public link
+      OC_SHARING_PUBLIC_WRITEABLE_SHARE_MUST_HAVE_PASSWORD: false # Don't require passwords for public shares with edit access
+      FRONTEND_DEFAULT_LINK_PERMISSIONS: 1 # Links are public by default
+
+      STORAGE_USERS_POSIX_WATCH_FS: true
+
+      SEARCH_EXTRACTOR_TYPE: tika
+      SEARCH_EXTRACTOR_TIKA_TIKA_URL: http://tika:9998
+      FRONTEND_FULL_TEXT_SEARCH_ENABLED: true
+
+      OC_WOPI_DISABLE_CHAT: true
+      COLLABORATION_APP_ICON: https://collabora.starsystem.dev/favicon.ico
+      COLLABORATION_APP_NAME: Collabora
+      COLLABORATION_APP_PRODUCT: Collabora
+      COLLABORATION_APP_ADDR: https://collabora.starsystem.dev
+      COLLABORATION_APP_INSECURE: false
+      COLLABORATION_WOPI_SECRET: ${COLLABORATION_WOPI_SECRET}
+      COLLABORATION_WOPI_SRC: https://cloud.starsystem.dev
+      COLLABORATION_STORE: nats-js-kv
+      COLLABORATION_CS3API_DATAGATEWAY_INSECURE: false
+      FRONTEND_APP_HANDLER_SECURE_VIEW_APP_ADDR: eu.opencloud.api.collaboration
+
+      POSTPROCESSING_STEPS: virusscan
+      ANTIVIRUS_MAX_SCAN_SIZE: 50MB
+      ANTIVIRUS_INFECTED_FILE_HANDLING: delete
+      ANTIVIRUS_MAX_SCAN_SIZE_MODE: truncate
+      ANTIVIRUS_WORKERS: 1
+      ANTIVIRUS_CLAMAV_SOCKET: /var/run/clamd.sock
+      ANTIVIRUS_SCANNER_TYPE: clamav
+
+      IDP_DEFAULT_SIGNIN_PAGE_TEXT: Sign in with LDAP
+      IDP_PASSWORD_RESET_URI: https://users.starsystem.dev/reset-password/step1
+      IDP_DEFAULT_LOGO_TARGET_URI: https://cloud.starsystem.dev
+
+      IDP_ALLOW_CLIENT_GUESTS: false
+      IDP_ALLOW_DYNAMIC_CLIENT_REGISTRATION: false
+
+      NOTIFICATIONS_SMTP_HOST: mail.smtp2go.com
+      NOTIFICATIONS_SMTP_PORT: "2525"
+      NOTIFICATIONS_SMTP_SENDER: "Constellation <noreply@starsystem.dev>"
+      NOTIFICATIONS_SMTP_USERNAME: noreply@starsystem.dev
+      NOTIFICATIONS_SMTP_PASSWORD: ${NOTIFICATIONS_SMTP_PASSWORD}
+      NOTIFICATIONS_SMTP_INSECURE: false
+      NOTIFICATIONS_SMTP_AUTHENTICATION: auto
+      NOTIFICATIONS_SMTP_ENCRYPTION: starttls
+
+      OC_LDAP_INSECURE: true
+      OC_LDAP_SERVER_WRITE_ENABLED: false
+      OC_LDAP_URI: ldap://ldap.starsystem.dev:389
+      OC_LDAP_BIND_DN: uid=opencloud,ou=people,dc=starsystem,dc=dev
+      OC_LDAP_BIND_PASSWORD: ${OC_LDAP_BIND_PASSWORD}
+      OC_ADMIN_USER_ID: jgledhill
+      SETTINGS_SETUP_DEFAULT_ASSIGNMENTS: false
+
+      OC_LDAP_GROUP_BASE_DN: ou=groups,dc=starsystem,dc=dev
+      OC_LDAP_GROUP_FILTER: "(cn=opencloud*)"
+      OC_LDAP_GROUP_OBJECTCLASS: groupOfNames
+      OC_LDAP_GROUP_SCHEMA_ID: uuid
+      OC_LDAP_GROUP_SCHEMA_MAIL: ""
+      OC_LDAP_GROUP_SCHEMA_DISPLAYNAME: uid
+      OC_LDAP_GROUP_SCHEMA_GROUPNAME: uid
+      OC_LDAP_GROUP_SCHEMA_MEMBER: member
+
+      OC_LDAP_DISABLE_USER_MECHANISM: group
+      OC_LDAP_DISABLED_USERS_GROUP_DN: cn=opencloud_disabled,ou=groups,dc=starsystem,dc=dev
+      OC_LDAP_USER_ENABLED_ATTRIBUTE: ""
+      OC_LDAP_USER_BASE_DN: ou=people,dc=starsystem,dc=dev
+      OC_LDAP_USER_FILTER: "(memberof=cn=opencloud,ou=groups,dc=starsystem,dc=dev)"
+      OC_LDAP_USER_OBJECTCLASS: person
+      OC_LDAP_USER_SCHEMA_USER_TYPE: opencloudType
+      OC_LDAP_USER_SCHEMA_ID: uuid
+      OC_LDAP_USER_SCHEMA_USERNAME: uid
+      OC_LDAP_USER_SCHEMA_MAIL: mail
+      OC_LDAP_USER_SCHEMA_DISPLAYNAME: displayName
+      IDP_LDAP_LOGIN_ATTRIBUTE: uid
+      GRAPH_USERNAME_MATCH: none
+      GRAPH_ASSIGN_DEFAULT_USER_ROLE: true
+      GRAPH_AVAILABLE_ROLES: "b1e2218d-eef8-4d4c-b82d-0f1a1b48f3b5,a8d5fe5e-96e3-418d-825b-534dbdf22b99,fb6c3e19-e378-47e5-b277-9732f9de6e21,58c63c02-1d89-4572-916a-870abc5a1b7d,2d00ce52-1fc2-4dbc-8b95-a73b73395f5a,1c996275-f1c9-4e71-abdf-a42f6495e960,312c0871-5ef7-4b3a-85b6-0e4074c64049"
+
+      GRAPH_LDAP_SERVER_UUID: true
+      GRAPH_LDAP_GROUP_CREATE_BASE_DN: ""
+      FRONTEND_READONLY_USER_ATTRIBUTES: user.onPremisesSamAccountName,user.displayName,user.mail,user.passwordProfile,user.accountEnabled,user.appRoleAssignments
