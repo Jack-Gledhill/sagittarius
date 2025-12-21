@@ -238,7 +238,7 @@ services:
       OC_LDAP_GROUP_SCHEMA_GROUPNAME: uid
       OC_LDAP_GROUP_SCHEMA_MEMBER: member
 
-      OC_LDAP_DISABLE_USER_MECHANISM: group
+      OC_LDAP_DISABLE_USER_MECHANISM: none
       OC_LDAP_DISABLED_USERS_GROUP_DN: cn=opencloud_disabled,ou=groups,dc=starsystem,dc=dev
       OC_LDAP_USER_ENABLED_ATTRIBUTE: ""
       OC_LDAP_USER_BASE_DN: ou=people,dc=starsystem,dc=dev
