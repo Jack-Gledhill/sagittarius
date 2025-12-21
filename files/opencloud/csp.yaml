@@ -16,7 +16,7 @@ directives:
     - '''self'''
     - 'blob:'
     - 'https://embed.diagrams.net/'
-    - 'https://collabora.starsystem.dev/'
+    - 'https://office.starsystem.dev/'
     # This is needed for the external-sites web extension when embedding sites
     - 'https://docs.opencloud.eu'
   img-src:
@@ -25,7 +25,7 @@ directives:
     - 'blob:'
     - 'https://raw.githubusercontent.com/opencloud-eu/awesome-apps/'
     - 'https://tile.openstreetmap.org/'
-    - 'https://collabora.starsystem.dev/'
+    - 'https://office.starsystem.dev/'
   manifest-src:
     - '''self'''
   media-src:

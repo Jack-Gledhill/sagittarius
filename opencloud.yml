@@ -163,6 +163,7 @@ services:
       OC_MAX_CONCURRENCY: 4
       OC_ADD_RUN_SERVICES: "antivirus,notifications"
       OC_EXCLUDE_RUN_SERVICES: idm # Disables internal LDAP server
+      PROXY_CSP_CONFIG_FILE_LOCATION: /etc/opencloud/csp.yaml
 
       OC_JWT_SECRET: ${OC_JWT_SECRET}
       OC_TRANSFER_SECRET: ${OC_TRANSFER_SECRET}
