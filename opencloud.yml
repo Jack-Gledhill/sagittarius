@@ -17,6 +17,14 @@ services:
     user: 0:0
     environment:
       CLAMD_CONF_StreamMaxLength: 50M
+      UID: 0
+      GID: 0
+    cap_add:
+      - CHOWN
+      - DAC_OVERRIDE
+      - FOWNER
+      - SETGID
+      - SETUID
     deploy:
       resources:
         limits:
