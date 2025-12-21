@@ -96,7 +96,6 @@ services:
   collabora:
     container_name: collabora
     image: collabora/code:25.04.8.1.1
-    user: 568:568
     entrypoint:
       - /bin/sh
       - -c
