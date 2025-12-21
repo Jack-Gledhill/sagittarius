@@ -116,6 +116,9 @@ services:
         limits:
           memory: 4G
     restart: unless-stopped
+    volumes:
+      - /usr/share/fonts/truetype:/opt/cool/systemplate/usr/share/fonts/truetype/more:ro
+      - /usr/share/fonts/truetype:/usr/share/fonts/truetype:ro
     environment:
       DONT_GEN_SSL_CERT: true
       dictionaries: en_GB
