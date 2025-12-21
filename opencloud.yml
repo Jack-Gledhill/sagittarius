@@ -93,6 +93,46 @@ services:
       - ${MOUNT_BASE_PATH}/data:/var/lib/opencloud
     restart: on-failure
 
+  wopi:
+    container_name: opencloud-wopi
+    image: opencloudeu/opencloud-rolling:latest
+    user: 568:568
+    entrypoint:
+      - /bin/sh
+    command:
+      - -c
+      - opencloud collaboration server
+    depends_on:
+      opencloud:
+        condition: service_started
+    ports:
+      - 9300:9300
+    volumes:
+      - ${MOUNT_BASE_PATH}/config:/etc/opencloud
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+    restart: unless-stopped
+    environment:
+      OC_URL: https://cloud.starsystem.dev
+      OC_JWT_SECRET: ${OC_JWT_SECRET}
+      OC_WOPI_DISABLE_CHAT: true
+
+      COLLABORATION_HTTP_ADDR: 0.0.0.0:9300
+      COLLABORATION_GRPC_ADDR: 0.0.0.0:9301
+
+      MICRO_REGISTRY: nats-js-kv
+      MICRO_REGISTRY_ADDRESS: opencloud:9233
+
+      COLLABORATION_WOPI_SRC: https://wopi.starsystem.dev
+      COLLABORATION_APP_NAME: Collabora
+      COLLABORATION_APP_PRODUCT: Collabora
+      COLLABORATION_APP_ADDR: https://office.starsystem.dev
+      COLLABORATION_APP_ICON: https://office.starsystem.dev/favicon.ico
+      COLLABORATION_APP_INSECURE: false
+      COLLABORATION_CS3API_DATAGATEWAY_INSECURE: false
+
   opencloud:
     container_name: opencloud
     image: opencloudeu/opencloud-rolling:latest
@@ -101,7 +141,7 @@ services:
       - /bin/sh
     command:
       - -c
-      - opencloud collaboration server
+      - opencloud server
     ports:
       - 9200:9200
     depends_on:
@@ -121,7 +161,6 @@ services:
       OC_MAX_CONCURRENCY: 4
       OC_ADD_RUN_SERVICES: "antivirus,notifications,collaboration"
       OC_EXCLUDE_RUN_SERVICES: idm # Disables internal LDAP server
-      OC_GATEWAY_GRPC_ADDR: 0.0.0.0:9142 # Exposes Reva Gateway for WOPI
 
       OC_JWT_SECRET: ${OC_JWT_SECRET}
       OC_TRANSFER_SECRET: ${OC_TRANSFER_SECRET}
@@ -129,11 +168,12 @@ services:
       OC_PERSISTENT_STORE: nats-js-kv
       OC_CACHE_STORE: nats-js-kv
       OC_CACHE_DISABLE_PERSISTENCE: false
+      STORAGE_USERS_ID_CACHE_STORE: nats-js-kv
+
+      FRONTEND_APP_HANDLER_SECURE_VIEW_APP_ADDR: eu.opencloud.api.collaboration
       NATS_NATS_HOST: 0.0.0.0 # Exposes NATS for WOPI
       NATS_NATS_PORT: 9233
-      STORAGE_USERS_ID_CACHE_STORE: nats-js-kv
-      MICRO_REGISTRY: nats-js-kv
-      MICRO_REGISTRY_ADDRESS: localhost:9233
+      OC_GATEWAY_GRPC_ADDR: 0.0.0.0:9142 # Exposes Reva Gateway for WOPI
 
       FRONTEND_CHECK_FOR_UPDATES: true
       FRONTEND_ENABLE_FAVORITES: true
@@ -156,17 +196,6 @@ services:
       SEARCH_EXTRACTOR_TYPE: tika
       SEARCH_EXTRACTOR_TIKA_TIKA_URL: http://tika:9998
       FRONTEND_FULL_TEXT_SEARCH_ENABLED: true
-
-      OC_WOPI_DISABLE_CHAT: true
-      COLLABORATION_APP_ICON: https://office.starsystem.dev/favicon.ico
-      COLLABORATION_APP_NAME: Collabora
-      COLLABORATION_APP_PRODUCT: Collabora
-      COLLABORATION_APP_ADDR: https://office.starsystem.dev
-      COLLABORATION_APP_INSECURE: false
-      COLLABORATION_WOPI_SECRET: ${COLLABORATION_WOPI_SECRET}
-      COLLABORATION_WOPI_SRC: https://cloud.starsystem.dev
-      COLLABORATION_CS3API_DATAGATEWAY_INSECURE: false
-      FRONTEND_APP_HANDLER_SECURE_VIEW_APP_ADDR: eu.opencloud.api.collaboration
 
       POSTPROCESSING_STEPS: virusscan
       ANTIVIRUS_MAX_SCAN_SIZE: 50MB
