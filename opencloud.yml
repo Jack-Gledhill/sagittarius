@@ -167,9 +167,10 @@ services:
       OC_JWT_SECRET: ${OC_JWT_SECRET}
       OC_TRANSFER_SECRET: ${OC_TRANSFER_SECRET}
 
+      OC_CACHE_DISABLE_PERSISTENCE: false
       OC_PERSISTENT_STORE: nats-js-kv
       OC_CACHE_STORE: nats-js-kv
-      OC_CACHE_DISABLE_PERSISTENCE: false
+      MICRO_REGISTRY: nats-js-kv
       STORAGE_USERS_ID_CACHE_STORE: nats-js-kv
 
       FRONTEND_APP_HANDLER_SECURE_VIEW_APP_ADDR: eu.opencloud.api.collaboration
