@@ -30,7 +30,7 @@ services:
         limits:
           memory: 4G
     volumes:
-      - /var/run/clamd.sock:/tmp/clamd.sock
+      - /var/run/clamav:/tmp
     restart: unless-stopped
 
   ext-draw-io:
@@ -115,7 +115,7 @@ services:
     volumes:
       - ${MOUNT_BASE_PATH}/config:/etc/opencloud
       - ${MOUNT_BASE_PATH}/data:/var/lib/opencloud
-      - /var/run/clamd.sock:/var/run/clamd.sock
+      - /var/run/clamav:/var/run/clamav
     environment:
       OC_URL: https://cloud.starsystem.dev
       OC_MAX_CONCURRENCY: 4
@@ -172,7 +172,7 @@ services:
       ANTIVIRUS_INFECTED_FILE_HANDLING: delete
       ANTIVIRUS_MAX_SCAN_SIZE_MODE: truncate
       ANTIVIRUS_WORKERS: 1
-      ANTIVIRUS_CLAMAV_SOCKET: /var/run/clamd.sock
+      ANTIVIRUS_CLAMAV_SOCKET: /var/run/clamav/clamd.sock
       ANTIVIRUS_SCANNER_TYPE: clamav
 
       IDP_DEFAULT_SIGNIN_PAGE_TEXT: Sign in with LDAP
