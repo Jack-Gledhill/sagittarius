@@ -132,6 +132,8 @@ services:
       NATS_NATS_HOST: 0.0.0.0 # Exposes NATS for WOPI
       NATS_NATS_PORT: 9233
       STORAGE_USERS_ID_CACHE_STORE: nats-js-kv
+      MICRO_REGISTRY: nats-js-kv
+      MICRO_REGISTRY_ADDRESS: localhost:9233
 
       FRONTEND_CHECK_FOR_UPDATES: true
       FRONTEND_ENABLE_FAVORITES: true
