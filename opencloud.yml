@@ -4,6 +4,7 @@ services:
   tika:
     container_name: tika
     image: apache/tika:latest
+    user: 568:568
     deploy:
       resources:
         limits:
@@ -13,6 +14,7 @@ services:
   clamav:
     container_name: clamav
     image: clamav/clamav:latest
+    user: 568:568
     environment:
       CLAMD_CONF_StreamMaxLength: 50M
     deploy:
@@ -26,6 +28,7 @@ services:
   ext-draw-io:
     container_name: opencloud-draw-io
     image: opencloudeu/web-extensions:draw-io-1.0.1
+    user: 568:568
     environment:
       SOURCE_PATH: /usr/share/nginx/html/apps/draw-io
       TARGET_PATH: /var/lib/opencloud/web/assets/apps
@@ -36,6 +39,7 @@ services:
   ext-external-sites:
     container_name: opencloud-external-sites
     image: opencloudeu/web-extensions:external-sites-1.3.0
+    user: 568:568
     environment:
       SOURCE_PATH: /usr/share/nginx/html/apps/external-sites
       TARGET_PATH: /var/lib/opencloud/web/assets/apps
@@ -46,6 +50,7 @@ services:
   ext-json-viewer:
     container_name: opencloud-json-viewer
     image: opencloudeu/web-extensions:json-viewer-1.0.2
+    user: 568:568
     environment:
       SOURCE_PATH: /usr/share/nginx/html/apps/json-viewer
       TARGET_PATH: /var/lib/opencloud/web/assets/apps
@@ -56,6 +61,7 @@ services:
   ext-maps:
     container_name: opencloud-maps
     image: opencloudeu/web-extensions:maps-1.0.2
+    user: 568:568
     environment:
       SOURCE_PATH: /usr/share/nginx/html/apps/maps
       TARGET_PATH: /var/lib/opencloud/web/assets/apps
@@ -66,6 +72,7 @@ services:
   ext-progress-bars:
     container_name: opencloud-progress-bars
     image: opencloudeu/web-extensions:progress-bars-1.1.0
+    user: 568:568
     environment:
       SOURCE_PATH: /usr/share/nginx/html/apps/progress-bars
       TARGET_PATH: /var/lib/opencloud/web/assets/apps
@@ -76,6 +83,7 @@ services:
   ext-unzip:
     container_name: opencloud-unzip
     image: opencloudeu/web-extensions:unzip-1.0.4
+    user: 568:568
     environment:
       SOURCE_PATH: /usr/share/nginx/html/apps/unzip
       TARGET_PATH: /var/lib/opencloud/web/assets/apps
@@ -86,6 +94,7 @@ services:
   opencloud:
     container_name: opencloud
     image: opencloudeu/opencloud-rolling:latest
+    user: 568:568
     entrypoint:
       - /bin/sh
     command:
