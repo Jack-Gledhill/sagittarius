@@ -145,8 +145,10 @@ services:
     ports:
       - 9200:9200
     depends_on:
-      - clamav
-      - tika
+      clamav:
+        condition: service_healthy
+      tika:
+        condition: service_started
     deploy:
       resources:
         limits:
