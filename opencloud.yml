@@ -161,7 +161,7 @@ services:
     environment:
       OC_URL: https://cloud.starsystem.dev
       OC_MAX_CONCURRENCY: 4
-      OC_ADD_RUN_SERVICES: "antivirus,notifications,collaboration"
+      OC_ADD_RUN_SERVICES: "antivirus,notifications"
       OC_EXCLUDE_RUN_SERVICES: idm # Disables internal LDAP server
 
       OC_JWT_SECRET: ${OC_JWT_SECRET}
