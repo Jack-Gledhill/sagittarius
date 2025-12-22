@@ -269,7 +269,7 @@ predefined_collections = {
 
 # Web interface backend
 # Value: none | internal
-type = none
+type = internal
 
 
 [logging]

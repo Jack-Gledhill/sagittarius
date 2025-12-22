@@ -16,7 +16,7 @@ services:
     image: clamav/clamav:latest
     user: 0:0
     environment:
-      CLAMD_CONF_StreamMaxLength: 50M
+      CLAMD_CONF_StreamMaxLength: 200M
       UID: 0
       GID: 0
     cap_add:
@@ -31,6 +31,19 @@ services:
           memory: 4G
     volumes:
       - /var/run/clamav:/tmp
+    restart: unless-stopped
+
+  radicale:
+    container_name: radicale
+    image: opencloudeu/radicale:latest
+    user: 568:568
+    deploy:
+      resources:
+        limits:
+          memory: 200M
+    volumes:
+      - ${MOUNT_BASE_PATH}/radicale/config:/etc/radicale/config
+      - ${MOUNT_BASE_PATH}/radicale:/var/lib/radicale
     restart: unless-stopped
 
   ext-draw-io:
@@ -246,10 +259,10 @@ services:
       FRONTEND_FULL_TEXT_SEARCH_ENABLED: true
 
       POSTPROCESSING_STEPS: virusscan
-      ANTIVIRUS_MAX_SCAN_SIZE: 50MB
+      ANTIVIRUS_MAX_SCAN_SIZE: 200MB
       ANTIVIRUS_INFECTED_FILE_HANDLING: delete
       ANTIVIRUS_MAX_SCAN_SIZE_MODE: partial
-      ANTIVIRUS_WORKERS: 1
+      ANTIVIRUS_WORKERS: 4
       ANTIVIRUS_CLAMAV_SOCKET: /var/run/clamav/clamd.sock
       ANTIVIRUS_SCANNER_TYPE: clamav
 
