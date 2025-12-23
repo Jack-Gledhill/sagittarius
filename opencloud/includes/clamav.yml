@@ -4,12 +4,13 @@ services:
     image: clamav/clamav:latest
     user: 0:0
     env_file:
-      - stack.env
+      - ../stack.env
     environment:
       CLAMD_CONF_StreamMaxLength: ${AV_MAX_SIZE}
-    extends:
-      file: ./extends/limits.yml
-      service: clamav
+    deploy:
+      resources:
+        limits:
+          memory: 4G
     cap_add:
       - CHOWN
       - DAC_OVERRIDE

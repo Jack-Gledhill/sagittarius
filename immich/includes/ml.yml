@@ -5,13 +5,12 @@ services:
   ml:
     container_name: immich-ml
     image: ghcr.io/immich-app/immich-machine-learning:v2-cuda # The -cuda here enables hardware acceleration
-    extends:
-      file: ./extends/limits.yml
-      service: ml
     env_file:
-      - stack.env
+      - ../stack.env
     deploy:
       resources:
+        limits:
+          memory: 1G
         # Enables hardware acceleration
         reservations:
           devices:

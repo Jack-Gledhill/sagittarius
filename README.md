@@ -9,7 +9,6 @@ Each stack should have its own directory at the root of the repository, which co
 - A `README.md` file, describing the stack and any other relevant information for yourself or others
 - A `compose.yml` file, containing the stack itself
 - A subdirectory called `includes` which contains any additional Compose files included by the main `compose.yml` file using the [`include`](https://docs.docker.com/compose/how-tos/multiple-compose-files/include/) element
-- A subdirectory called `extends` which functions similarly to `includes`, but is instead for the [`extends`](https://docs.docker.com/compose/how-tos/multiple-compose-files/extends/) element
 - A subdirectory called `files` which contains any additional files required by the stack which can be automatically mounted into containers with relative `volumes` when `Enable relative path volumes` is enabled
 - An optional `stack.env` file containing PUBLIC environment variables that can be used by the stack
 - An optional `example.env` file which contains example values for secret environment variables required by the stack

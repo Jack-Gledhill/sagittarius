@@ -7,9 +7,10 @@ services:
       - -c
     command:
       - coolconfig generate-proof-key && /start-collabora-online.sh
-    extends:
-      file: ./extends/limits.yml
-      service: collabora
+    deploy:
+      resources:
+        limits:
+          memory: 4G
     cap_add:
       - MKNOD
     healthcheck:
@@ -51,9 +52,10 @@ services:
     command:
       - -c
       - opencloud collaboration server
-    extends:
-      file: ./extends/limits.yml
-      service: wopi
+    deploy:
+      resources:
+        limits:
+          memory: 1G
     depends_on:
       opencloud:
         condition: service_started
@@ -62,11 +64,11 @@ services:
     ports:
       - 9300:9300
     volumes:
-      - ./files/csp.yaml:/etc/opencloud/csp.yaml:ro
-      - ./files/proxy.yaml:/etc/opencloud/proxy.yaml:ro
+      - ../files/csp.yaml:/etc/opencloud/csp.yaml:ro
+      - ../files/proxy.yaml:/etc/opencloud/proxy.yaml:ro
     restart: unless-stopped
     env_file:
-      - stack.env
+      - ../stack.env
     environment:
       OC_URL: https://${OC_DOMAIN}
       OC_JWT_SECRET: ${OC_JWT_SECRET}

@@ -2,11 +2,12 @@ services:
   postgres:
     container_name: immich-postgres
     image: ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0
-    extends:
-      file: ./extends/limits.yml
-      service: postgres
+    deploy:
+      resources:
+        limits:
+          memory: 1G
     env_file:
-      - stack.env
+      - ../stack.env
     environment:
       POSTGRES_INITDB_ARGS: '--data-checksums'
       DB_STORAGE_TYPE: HDD # Sagittarius runs on HDDs, this should help optimise things a bit
