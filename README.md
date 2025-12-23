@@ -46,6 +46,10 @@ DB_PASSWORD=reallySecretPassword
 
 **Note:** you can't use [Docker Compose Secrets](https://docs.docker.com/compose/how-tos/use-secrets/) with Portainer's stack deployment system.
 
+**Warning:** Portainer seems to have a particularly annoying bug where environment variables with commas in their values are not loaded into the container properly when relative path mounts is enabled. 
+The workaround for now is to escape commas with `\` until the bug is fixed. 
+See [this issue for details](https://github.com/portainer/portainer/issues/11091).
+
 ### New Stacks
 
 New stacks can be added using the `Add stack` button.
