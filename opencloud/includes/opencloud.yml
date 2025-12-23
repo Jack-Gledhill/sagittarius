@@ -36,6 +36,7 @@ services:
       OC_ADD_RUN_SERVICES: "antivirus,notifications"
       OC_EXCLUDE_RUN_SERVICES: "idm" # Disables internal LDAP server
       PROXY_CSP_CONFIG_FILE_LOCATION: /etc/opencloud/csp.yaml
+      WEB_OPTION_DISABLE_FEEDBACK_LINK: true
 
       OC_CACHE_DISABLE_PERSISTENCE: false
       OC_CACHE_STORE: nats-js-kv
@@ -91,6 +92,7 @@ services:
       NOTIFICATIONS_SMTP_ENCRYPTION: starttls
 
       WEB_OPTION_ACCOUNT_EDIT_LINK_HREF: "${OIDC_ACCOUNT_EDIT_LINK}"
+      WEB_OIDC_SCOPE: "${OIDC_SCOPES}"
       PROXY_ROLE_ASSIGNMENT_DRIVER: oidc
       PROXY_ROLE_ASSIGNMENT_OIDC_CLAIM: "${OIDC_ROLES_CLAIM}"
       GRAPH_USERNAME_MATCH: none
