@@ -31,3 +31,20 @@ additional_policies:
         skip_x_access_token: true
         additional_headers:
           - X-Script-Name: /caldav
+
+role_assignment:
+  oidc_role_mapper:
+    role_mapping:
+      - role_name: admin
+        claim_value: opencloud_admin
+      - role_name: spaceadmin
+        claim_value: opencloud_space_admin
+      - role_name: user
+        claim_value: opencloud
+      - role_name: guest
+        claim_value: opencloud_guest
+
+# See here: https://docs.opencloud.eu/docs/admin/configuration/default-user-quota
+role_quotas:
+  # User role
+  'd7beeea8-8ff4-406b-8fb6-ab2dd81e6b11': 10737418240 # 10 GB
