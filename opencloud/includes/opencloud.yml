@@ -7,7 +7,7 @@ services:
       - /bin/sh
     command:
       - -c
-      - opencloud server
+      - opencloud init || true; opencloud server
     ports:
       - 9200:9200
     depends_on:
