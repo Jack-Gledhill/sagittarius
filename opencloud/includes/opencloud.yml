@@ -34,7 +34,7 @@ services:
       OC_TRANSFER_SECRET: "${OC_TRANSFER_SECRET}"
       OC_MAX_CONCURRENCY: 4
       OC_ADD_RUN_SERVICES: "antivirus,notifications"
-      OC_EXCLUDE_RUN_SERVICES: "idm,idp" # Disables internal LDAP and OIDC servers
+      OC_EXCLUDE_RUN_SERVICES: "idm" # Disables internal LDAP server
       PROXY_CSP_CONFIG_FILE_LOCATION: /etc/opencloud/csp.yaml
 
       OC_CACHE_DISABLE_PERSISTENCE: false
@@ -90,11 +90,7 @@ services:
       NOTIFICATIONS_SMTP_AUTHENTICATION: auto
       NOTIFICATIONS_SMTP_ENCRYPTION: starttls
 
-      OC_OIDC_ISSUER: "${OIDC_ISSUER}"
       WEB_OPTION_ACCOUNT_EDIT_LINK_HREF: "${OIDC_ACCOUNT_EDIT_LINK}"
-      PROXY_OIDC_REWRITE_WELLKNOWN: true
-      PROXY_USER_OIDC_CLAIM: preferred_username
-      PROXY_USER_CS3_CLAIM: username
       PROXY_ROLE_ASSIGNMENT_DRIVER: oidc
       PROXY_ROLE_ASSIGNMENT_OIDC_CLAIM: "${OIDC_ROLES_CLAIM}"
       GRAPH_USERNAME_MATCH: none
