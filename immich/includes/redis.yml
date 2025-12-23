@@ -1,0 +1,10 @@
+services:
+  redis:
+    container_name: immich-redis
+    image: docker.io/valkey/valkey:9 # Valkey is a drop-in Redis replacement, Immich's devs recommend this so I'll use it too
+    extends:
+      file: ./extends/limits.yml
+      service: redis
+    healthcheck:
+      test: redis-cli ping || exit 1
+    restart: unless-stopped

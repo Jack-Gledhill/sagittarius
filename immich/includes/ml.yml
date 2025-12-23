@@ -1,0 +1,26 @@
+volumes:
+  model-cache:
+
+services:
+  ml:
+    container_name: immich-ml
+    image: ghcr.io/immich-app/immich-machine-learning:v2-cuda # The -cuda here enables hardware acceleration
+    ports:
+      - 3003:3003
+    extends:
+      file: ./extends/limits.yml
+      service: ml
+    env_file:
+      - stack.env
+    deploy:
+      resources:
+        # Enables hardware acceleration
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities:
+                - gpu
+    volumes:
+      - model-cache:/cache # This is just a cache of downloaded models, there's no need to keep it in a specific place or backup it up
+    restart: unless-stopped

@@ -1,0 +1,17 @@
+services:
+  api:
+    container_name: immich-api
+    image: ghcr.io/immich-app/immich-server:v2
+    ports:
+      - 2283:2283
+    extends:
+      file: ./extends/limits.yml
+      service: api
+    env_file:
+      - stack.env
+    environment:
+      IMMICH_WORKERS_INCLUDE: api
+    restart: unless-stopped
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${MOUNT_BASE_PATH}/library:/data

@@ -1,0 +1,26 @@
+services:
+  workers:
+    container_name: immich-workers
+    image: ghcr.io/immich-app/immich-server:v2
+    extends:
+      file: ./extends/limits.yml
+      service: workers
+    environment:
+      IMMICH_WORKERS_EXCLUDE: api
+    env_file:
+      - stack.env
+    deploy:
+      resources:
+        # Enables hardware transcoding via the dedicated GPU
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities:
+                - gpu
+                - compute
+                - video
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${MOUNT_BASE_PATH}/library:/data
+    restart: unless-stopped
