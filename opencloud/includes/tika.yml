@@ -8,5 +8,5 @@ services:
         limits:
           memory: 500M
     env_file:
-      - stack.env
+      - ../stack.env
     restart: unless-stopped
