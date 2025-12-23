@@ -29,7 +29,6 @@ services:
     env_file:
       - ../stack.env
     environment:
-      OC_LOG_LEVEL: debug
       OC_URL: "https://${OC_DOMAIN}"
       OC_JWT_SECRET: "${OC_JWT_SECRET}"
       OC_TRANSFER_SECRET: "${OC_TRANSFER_SECRET}"
@@ -97,7 +96,7 @@ services:
       OC_OIDC_CLIENT_ID: "${OIDC_CLIENT_ID}"
       WEB_OPTION_ACCOUNT_EDIT_LINK_HREF: "${OIDC_ACCOUNT_EDIT_LINK}"
       WEB_OIDC_SCOPE: "${OIDC_SCOPES}"
-      PROXY_ROLE_ASSIGNMENT_DRIVER: default
+      PROXY_ROLE_ASSIGNMENT_DRIVER: oidc
       PROXY_ROLE_ASSIGNMENT_OIDC_CLAIM: "${OIDC_ROLES_CLAIM}"
       GRAPH_USERNAME_MATCH: none
       GRAPH_ASSIGN_DEFAULT_USER_ROLE: false
