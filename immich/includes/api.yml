@@ -16,4 +16,4 @@ services:
     restart: unless-stopped
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ${MOUNT_BASE_PATH}/library:/data
+      - "${MOUNT_BASE_PATH}/library:/data"

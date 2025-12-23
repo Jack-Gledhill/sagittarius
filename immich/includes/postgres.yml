@@ -15,5 +15,5 @@ services:
     # See here: https://docs.docker.com/reference/compose-file/services/#shm_size
     shm_size: 128mb
     volumes:
-      - ${MOUNT_BASE_PATH}/postgres:/var/lib/postgresql/data
+      - "${MOUNT_BASE_PATH}/postgres:/var/lib/postgresql/data"
     restart: unless-stopped
