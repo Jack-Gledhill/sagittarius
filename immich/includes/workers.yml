@@ -2,6 +2,8 @@ services:
   workers:
     container_name: immich-workers
     image: ghcr.io/immich-app/immich-server:v2
+#    ports:
+#      - 8082:8082 # Metrics
     extends:
       file: ./extends/limits.yml
       service: workers

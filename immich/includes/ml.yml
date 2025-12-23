@@ -5,8 +5,6 @@ services:
   ml:
     container_name: immich-ml
     image: ghcr.io/immich-app/immich-machine-learning:v2-cuda # The -cuda here enables hardware acceleration
-    ports:
-      - 3003:3003
     extends:
       file: ./extends/limits.yml
       service: ml

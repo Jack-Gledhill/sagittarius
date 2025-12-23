@@ -4,6 +4,7 @@ services:
     image: ghcr.io/immich-app/immich-server:v2
     ports:
       - 2283:2283
+      # - 8081:8081 # Metrics
     extends:
       file: ./extends/limits.yml
       service: api
