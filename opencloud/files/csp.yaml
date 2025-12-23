@@ -6,6 +6,7 @@ directives:
     - 'blob:'
     - 'https://raw.githubusercontent.com/opencloud-eu/awesome-apps/'
     - 'https://update.opencloud.eu/'
+    - 'https://login.starsystem.dev'
   default-src:
     - '''none'''
   font-src:
