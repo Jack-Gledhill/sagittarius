@@ -6,7 +6,7 @@ services:
     env_file:
       - ../stack.env
     environment:
-      CLAMD_CONF_StreamMaxLength: ${AV_MAX_SIZE}
+      CLAMD_CONF_StreamMaxLength: "${AV_MAX_SIZE}"
     deploy:
       resources:
         limits:

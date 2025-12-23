@@ -11,5 +11,5 @@ services:
           memory: 200M
     volumes:
       - ../files/config:/etc/radicale/config:ro
-      - ${OC_MOUNT_BASE}/radicale:/var/lib/radicale
+      - "${OC_MOUNT_BASE}/radicale:/var/lib/radicale"
     restart: unless-stopped
