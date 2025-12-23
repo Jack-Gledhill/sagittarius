@@ -1,0 +1,136 @@
+name: opencloud
+
+include:
+  - includes/clamav.yml
+  - includes/collabora.yml
+  - includes/radicale.yml
+  - includes/tika.yml
+  - includes/web-extensions.yml
+
+services:
+  opencloud:
+    container_name: opencloud
+    image: opencloudeu/opencloud-rolling:latest
+    user: 568:568
+    entrypoint:
+      - /bin/sh
+    command:
+      - -c
+      - opencloud server
+    ports:
+      - 9200:9200
+    depends_on:
+      clamav:
+        condition: service_healthy
+      tika:
+        condition: service_started
+    extends:
+      file: ./extends/limits.yml
+      service: opencloud
+    restart: unless-stopped
+    volumes:
+      - ./files/csp.yaml:/etc/opencloud/csp.yaml:ro
+      - ./files/proxy.yaml:/etc/opencloud/proxy.yaml:ro
+      - ${OC_MOUNT_BASE}/config:/etc/opencloud
+      - ${OC_MOUNT_BASE}/data:/var/lib/opencloud
+      - /var/run/clamav:/var/run/clamav
+    env_file:
+      - stack.env
+    environment:
+      OC_URL: https://${OC_DOMAIN}
+      OC_JWT_SECRET: ${OC_JWT_SECRET}
+      OC_TRANSFER_SECRET: ${OC_TRANSFER_SECRET}
+      OC_MAX_CONCURRENCY: 4
+      OC_ADD_RUN_SERVICES: "antivirus,notifications"
+      OC_EXCLUDE_RUN_SERVICES: idm # Disables internal LDAP server
+      PROXY_CSP_CONFIG_FILE_LOCATION: /etc/opencloud/csp.yaml
+
+      OC_CACHE_DISABLE_PERSISTENCE: false
+      OC_CACHE_STORE: nats-js-kv
+      MICRO_REGISTRY: nats-js-kv
+
+      FRONTEND_APP_HANDLER_SECURE_VIEW_APP_ADDR: eu.opencloud.api.collaboration
+      NATS_NATS_HOST: 0.0.0.0 # Exposes NATS for WOPI
+      NATS_NATS_PORT: 9233
+      OC_GATEWAY_GRPC_ADDR: 0.0.0.0:9142 # Exposes Reva Gateway for WOPI
+
+      FRONTEND_CHECK_FOR_UPDATES: true
+      FRONTEND_ENABLE_FAVORITES: true
+      FRONTEND_CONFIGURABLE_NOTIFICATIONS: true
+      FRONTEND_GROUPWARE_ENABLED: true
+
+      OC_INSECURE: false
+      PROXY_TLS: false
+      PROXY_ENABLE_BASIC_AUTH: false
+      PROXY_HTTP_ADDR: 0.0.0.0:9200 # Main web server
+      PROXY_DEBUG_ADDR: 0.0.0.0:9201 # Exposes metrics
+
+      OC_SHARING_PUBLIC_SHARE_MUST_HAVE_PASSWORD: false # Don't require passwords to share documents via public link
+      OC_SHARING_PUBLIC_WRITEABLE_SHARE_MUST_HAVE_PASSWORD: false # Don't require passwords for public shares with edit access
+      FRONTEND_DEFAULT_LINK_PERMISSIONS: 1 # Links are public by default
+
+      STORAGE_USERS_POSIX_WATCH_FS: true
+
+      SEARCH_EXTRACTOR_TYPE: tika
+      SEARCH_EXTRACTOR_TIKA_TIKA_URL: http://tika:9998
+      FRONTEND_FULL_TEXT_SEARCH_ENABLED: true
+
+      POSTPROCESSING_STEPS: virusscan
+      ANTIVIRUS_INFECTED_FILE_HANDLING: delete
+      ANTIVIRUS_MAX_SCAN_SIZE_MODE: partial
+      ANTIVIRUS_MAX_SCAN_SIZE: ${AV_MAX_SIZE}B
+      ANTIVIRUS_WORKERS: 4
+      ANTIVIRUS_CLAMAV_SOCKET: /var/run/clamav/clamd.sock
+      ANTIVIRUS_SCANNER_TYPE: clamav
+
+      IDP_PASSWORD_RESET_URI: ${RESET_PASSWORD_URI}
+      IDP_DEFAULT_LOGO_TARGET_URI: https://${OC_DOMAIN}
+
+      IDP_ALLOW_CLIENT_GUESTS: false
+      IDP_ALLOW_DYNAMIC_CLIENT_REGISTRATION: false
+
+      NOTIFICATIONS_SMTP_HOST: ${SMTP_HOST}
+      NOTIFICATIONS_SMTP_PORT: ${SMTP_PORT}
+      NOTIFICATIONS_SMTP_SENDER: ${SMTP_SENDER}
+      NOTIFICATIONS_SMTP_USERNAME: ${SMTP_USERNAME}
+      NOTIFICATIONS_SMTP_PASSWORD: ${SMTP_PASSWORD}
+      NOTIFICATIONS_SMTP_INSECURE: false
+      NOTIFICATIONS_SMTP_AUTHENTICATION: auto
+      NOTIFICATIONS_SMTP_ENCRYPTION: starttls
+
+      OC_LDAP_INSECURE: true
+      OC_LDAP_SERVER_WRITE_ENABLED: false
+      OC_LDAP_URI: ${LDAP_URI}
+      OC_LDAP_BIND_DN: ${LDAP_BIND_DN}
+      OC_LDAP_BIND_PASSWORD: ${LDAP_BIND_PASSWORD}
+      OC_ADMIN_USER_ID: ${OC_ADMIN_USERNAME}
+      SETTINGS_SETUP_DEFAULT_ASSIGNMENTS: false
+
+      OC_LDAP_GROUP_BASE_DN: ${LDAP_GROUP_BASE_DN}
+      OC_LDAP_GROUP_FILTER: ${LDAP_GROUP_FILTER}
+      OC_LDAP_GROUP_OBJECTCLASS: groupOfNames
+      OC_LDAP_GROUP_SCHEMA_ID: uuid
+      OC_LDAP_GROUP_SCHEMA_MAIL: ""
+      OC_LDAP_GROUP_SCHEMA_DISPLAYNAME: uid
+      OC_LDAP_GROUP_SCHEMA_GROUPNAME: uid
+      OC_LDAP_GROUP_SCHEMA_MEMBER: member
+
+      OC_LDAP_DISABLE_USER_MECHANISM: none
+      OC_LDAP_DISABLED_USERS_GROUP_DN: ""
+      OC_LDAP_USER_ENABLED_ATTRIBUTE: ""
+      OC_LDAP_USER_BASE_DN: ${LDAP_USER_BASE_DN}
+      OC_LDAP_USER_FILTER: ${LDAP_USER_FILTER}
+      OC_LDAP_USER_OBJECTCLASS: person
+      OC_LDAP_USER_SCHEMA_USER_TYPE: opencloudType
+      OC_LDAP_USER_SCHEMA_ID: uuid
+      OC_LDAP_USER_SCHEMA_USERNAME: uid
+      OC_LDAP_USER_SCHEMA_MAIL: mail
+      OC_LDAP_USER_SCHEMA_DISPLAYNAME: displayName
+      IDP_LDAP_LOGIN_ATTRIBUTE: uid
+      GRAPH_USERNAME_MATCH: none
+      GRAPH_ASSIGN_DEFAULT_USER_ROLE: true
+      GRAPH_AVAILABLE_ROLES: "b1e2218d-eef8-4d4c-b82d-0f1a1b48f3b5,a8d5fe5e-96e3-418d-825b-534dbdf22b99,fb6c3e19-e378-47e5-b277-9732f9de6e21,58c63c02-1d89-4572-916a-870abc5a1b7d,2d00ce52-1fc2-4dbc-8b95-a73b73395f5a,1c996275-f1c9-4e71-abdf-a42f6495e960,312c0871-5ef7-4b3a-85b6-0e4074c64049"
+
+      GRAPH_LDAP_SERVER_UUID: true
+      GRAPH_LDAP_GROUP_CREATE_BASE_DN: ""
+      FRONTEND_READONLY_USER_ATTRIBUTES: user.onPremisesSamAccountName,user.displayName,user.mail,user.passwordProfile,user.accountEnabled,user.appRoleAssignments

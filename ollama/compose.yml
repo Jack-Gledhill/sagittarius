@@ -1,5 +1,8 @@
 name: ollama
 
+volumes:
+  data:
+
 services:
   ollama:
     container_name: ollama
@@ -18,7 +21,9 @@ services:
           memory: 8G
     restart: unless-stopped
     volumes:
-      - /mnt/storage-pool/apps/ollama:/root/.ollama
+      - data:/root/.ollama
+    env_file:
+      - stack.env
     environment:
       OLLAMA_VULKAN: 1
       OLLAMA_HOST: 0.0.0.0:11434

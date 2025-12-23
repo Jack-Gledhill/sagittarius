@@ -1,0 +1,89 @@
+services:
+  collabora:
+    container_name: collabora
+    image: collabora/code:25.04.8.1.1
+    entrypoint:
+      - /bin/sh
+      - -c
+    command:
+      - coolconfig generate-proof-key && /start-collabora-online.sh
+    extends:
+      file: ./extends/limits.yml
+      service: collabora
+    cap_add:
+      - MKNOD
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9980/hosting/discovery" ]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+    ports:
+      - 9980:9980
+    restart: unless-stopped
+    volumes:
+      - /usr/share/fonts/truetype:/opt/cool/systemplate/usr/share/fonts/truetype/more:ro
+      - /usr/share/fonts/truetype:/usr/share/fonts/truetype:ro
+    environment:
+      DONT_GEN_SSL_CERT: true
+      dictionaries: en_GB
+      aliasgroup1: https://${WOPI_DOMAIN}:443,https://${OC_DOMAIN}:443
+      server_name: ${COLLABORA_DOMAIN}
+      username: ${COLLABORA_USERNAME}
+      password: ${COLLABORA_PASSWORD}
+      extra_params: |-
+        --o:welcome.enable=false 
+        --o:user_interface.mode=tabbed 
+        --o:ssl.termination=true 
+        --o:ssl.enable=false 
+        --o:home_mode.enable=true 
+        --o:num_prespawn_children=${COLLABORA_NUM_PRESPAWN}
+        --o:per_document.max_concurrency=${COLLABORA_MAX_CONCURRENCY}
+        --o:overwrite_mode=false 
+        --o:net.frame_ancestors=${OC_DOMAIN} 
+        --o:net.lok_allow.host[14]=${OC_DOMAIN}
+
+  wopi:
+    container_name: opencloud-wopi
+    image: opencloudeu/opencloud-rolling:latest
+    user: 568:568
+    entrypoint:
+      - /bin/sh
+    command:
+      - -c
+      - opencloud collaboration server
+    extends:
+      file: ./extends/limits.yml
+      service: wopi
+    depends_on:
+      opencloud:
+        condition: service_started
+      collabora:
+        condition: service_started
+    ports:
+      - 9300:9300
+    volumes:
+      - ./files/csp.yaml:/etc/opencloud/csp.yaml:ro
+      - ./files/proxy.yaml:/etc/opencloud/proxy.yaml:ro
+    restart: unless-stopped
+    env_file:
+      - stack.env
+    environment:
+      OC_URL: https://${OC_DOMAIN}
+      OC_JWT_SECRET: ${OC_JWT_SECRET}
+      OC_TRANSFER_SECRET: ${OC_TRANSFER_SECRET}
+      OC_WOPI_DISABLE_CHAT: true
+
+      COLLABORATION_HTTP_ADDR: 0.0.0.0:9300
+      COLLABORATION_GRPC_ADDR: 0.0.0.0:9301
+
+      MICRO_REGISTRY: nats-js-kv
+      MICRO_REGISTRY_ADDRESS: opencloud:9233
+
+      COLLABORATION_WOPI_SRC: https://${WOPI_DOMAIN}
+      COLLABORATION_WOPI_SECRET: ${WOPI_SECRET}
+      COLLABORATION_APP_NAME: Collabora
+      COLLABORATION_APP_PRODUCT: Collabora
+      COLLABORATION_APP_ADDR: https://${COLLABORA_DOMAIN}
+      COLLABORATION_APP_ICON: https://${COLLABORA_DOMAIN}/favicon.ico
+      COLLABORATION_APP_INSECURE: false
+      COLLABORATION_CS3API_DATAGATEWAY_INSECURE: false

@@ -1,0 +1,14 @@
+services:
+  radicale:
+    container_name: radicale
+    image: opencloudeu/radicale:latest
+    user: 568:568
+    env_file:
+      - stack.env
+    extends:
+      file: ./extends/limits.yml
+      service: radicale
+    volumes:
+      - ./files/config:/etc/radicale/config:ro
+      - ${OC_MOUNT_BASE}/radicale:/var/lib/radicale
+    restart: unless-stopped

@@ -1,0 +1,21 @@
+services:
+  clamav:
+    container_name: clamav
+    image: clamav/clamav:latest
+    user: 0:0
+    env_file:
+      - stack.env
+    environment:
+      CLAMD_CONF_StreamMaxLength: ${AV_MAX_SIZE}
+    extends:
+      file: ./extends/limits.yml
+      service: clamav
+    cap_add:
+      - CHOWN
+      - DAC_OVERRIDE
+      - FOWNER
+      - SETGID
+      - SETUID
+    volumes:
+      - /var/run/clamav:/tmp
+    restart: unless-stopped
