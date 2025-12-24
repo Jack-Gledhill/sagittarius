@@ -1,0 +1,33 @@
+volumes:
+  cache:
+
+services:
+  jellyfin:
+    container_name: jellyfin
+    image: jellyfin/jellyfin:latest
+    user: 568:568
+    ports:
+      - 8096:8096/tcp
+      - 7359:7359/udp
+    env_file:
+      - ../stack.env
+    environment:
+      JELLYFIN_PublishedServerUrl: "${JELLYFIN_URL}"
+      JELLYFIN_CONFIG_DIR: /config
+      JELLYFIN_CACHE_DIR: /cache
+      JELLYFIN_DATA_DIR: /data
+    deploy:
+      resources:
+        limits:
+          memory: 8G
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
+    volumes:
+      - cache:/cache
+      - "${MOUNT_BASE_PATH}/config:/config"
+      - "${MOUNT_BASE_PATH}/data:/data"
+      - "${MEDIA_MOUNT_PATH}:/media"
+    restart: unless-stopped

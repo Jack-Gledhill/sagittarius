@@ -1,0 +1,6 @@
+name: jellyfin
+
+include:
+  - includes/jellyfin.yml
+
+services: {}
