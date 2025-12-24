@@ -18,7 +18,7 @@ This structure should keep everything neat, maintainable and easy to understand.
 
 ## Deployment
 
-Portainer's UI can be accessed at [`sagittarius.starsystem.dev:9000`](https://sagittarius.starsystem.dev:9000) (VPN required).
+Portainer's UI can be accessed at [`portainer.starsystem.dev`](https://portainer.starsystem.dev) (2FA required).
 The `Stacks` menu will show all existing stacks and allow the addition of new stacks.
 
 ### Environment Variables
