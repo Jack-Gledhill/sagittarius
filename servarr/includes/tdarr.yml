@@ -8,7 +8,9 @@ services:
     ports:
       - 8265:8265
     environment:
-      auth: true
+      PUID: ${PUID}
+      PGID: ${PGID}
+      UMASK_SET: 002
       internalNode: true
       inContainer: true
       openBrowser: false
@@ -23,6 +25,8 @@ services:
       - "${TDARR_MOUNT_PATH}/server:/app/server"
       - "${MEDIA_MOUNT_PATH}:/media"
       - tdarr-cache:/temp
+    devices:
+      - /dev/dri:/dev/dri
     deploy:
       resources:
         limits:
