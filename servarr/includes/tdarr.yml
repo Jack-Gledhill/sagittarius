@@ -7,7 +7,6 @@ services:
     image: ghcr.io/haveagitgat/tdarr:latest
     ports:
       - 8265:8265
-    user: 568:568
     environment:
       auth: true
       internalNode: true
