@@ -22,7 +22,7 @@ services:
       - "${TDARR_MOUNT_PATH}/configs:/app/configs"
       - "${TDARR_MOUNT_PATH}/server:/app/server"
       - "${MEDIA_MOUNT_PATH}:/media"
-      - tdarr-cache:/tmp
+      - tdarr-cache:/temp
     deploy:
       resources:
         limits:
