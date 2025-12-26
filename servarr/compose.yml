@@ -1,6 +1,7 @@
-name: jellyfin
+name: servarr
 
 include:
   - includes/jellyfin.yml
+  - includes/tdarr.yml
 
 services: {}

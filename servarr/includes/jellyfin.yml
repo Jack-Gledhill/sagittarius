@@ -27,7 +27,7 @@ services:
               capabilities: [ gpu ]
     volumes:
       - cache:/cache
-      - "${MOUNT_BASE_PATH}/config:/config"
-      - "${MOUNT_BASE_PATH}/data:/data"
+      - "${JELLYFIN_MOUNT_BASE}/config:/config"
+      - "${JELLYFIN_MOUNT_BASE}/data:/data"
       - "${MEDIA_MOUNT_PATH}:/media"
     restart: unless-stopped

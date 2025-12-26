@@ -3,3 +3,4 @@
 *.env
 !stack.env
 !example.env
+wip.*

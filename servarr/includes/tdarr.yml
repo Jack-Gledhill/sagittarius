@@ -1,0 +1,36 @@
+volumes:
+  tdarr-cache:
+
+services:
+  tdarr:
+    container_name: tdarr
+    image: ghcr.io/haveagitgat/tdarr:latest
+    ports:
+      - 8265:8265
+    user: 568:568
+    environment:
+      auth: true
+      internalNode: true
+      inContainer: true
+      openBrowser: false
+      serverURL: "${TDARR_URL}"
+      nodeName: sagittarius
+      priority: 0 # Highest priority
+      NVIDIA_DRIVER_CAPABILITIES: all
+      NVIDIA_VISIBLE_DEVICES: all
+      ffmpegVersion: 7
+    volumes:
+      - "${TDARR_MOUNT_PATH}/configs:/app/configs"
+      - "${TDARR_MOUNT_PATH}/server:/app/server"
+      - "${MEDIA_MOUNT_PATH}:/media"
+      - tdarr-cache:/tmp
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
+    restart: unless-stopped
