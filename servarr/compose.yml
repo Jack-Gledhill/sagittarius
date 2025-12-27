@@ -1,6 +1,7 @@
 name: servarr
 
 include:
+  - includes/qbittorrent.yml
   - includes/jellyfin.yml
   - includes/jellyseerr.yml
   - includes/jellystat.yml
