@@ -1,0 +1,46 @@
+services:
+  jellystat:
+    container_name: jellystat
+    image: cyfershepard/jellystat:latest
+    ports:
+      - 3000:3000
+    depends_on:
+      - jellystat-postgres
+    env_file:
+      - ../stack.env
+    environment:
+      POSTGRES_IP: jellystat-postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: "${JELLYSTAT_DB_USER}"
+      POSTGRES_PASSWORD: "${JELLYSTAT_DB_PASSWORD}"
+      POSTGRES_DB: "${JELLYSTAT_DB_NAME}"
+      JWT_SECRET: "${JELLYSTAT_JWT_SECRET}"
+      JS_BASE_URL: "${JELLYSTAT_URL}"
+      JS_USER: "${JELLYSTAT_USER}"
+      JS_PASSWORD: "${JELLYSTAT_PASSWORD}"
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    volumes:
+      - "${JELLYSTAT_MOUNT_BASE}/backups:/app/backend/backup-data"
+    restart: unless-stopped
+
+  jellystat-postgres:
+    container_name: jellystat-postgres
+    image: postgres:18-alpine
+    env_file:
+      - ../stack.env
+    environment:
+      POSTGRES_DB: "${JELLYSTAT_DB_NAME}"
+      POSTGRES_USER: "${JELLYSTAT_DB_USER}"
+      POSTGRES_PASSWORD: "${JELLYSTAT_DB_PASSWORD}"
+      POSTGRES_INITDB_ARGS: "--data-checksums"
+    deploy:
+      resources:
+        limits:
+          memory: 200M
+    shm_size: 1gb # Jellystat Docker image recommends this be 1GB
+    volumes:
+      - "${DATABASE_MOUNT_PATH}/jellystat:/var/lib/postgresql/18/docker"
+    restart: unless-stopped
