@@ -25,7 +25,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 500Mi
+          memory: 500M
     volumes:
       - "${JELLYSEERR_MOUNT_PATH}/config:/app/config"
     restart: unless-stopped
