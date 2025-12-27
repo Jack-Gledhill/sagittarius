@@ -31,7 +31,8 @@ services:
 
   jellyseerr-postgres:
     container_name: jellyseerr-postgres
-    image: postgres:18
+    image: postgres:18-alpine
+    user: 568:568
     env_file:
       - ../stack.env
     environment:
