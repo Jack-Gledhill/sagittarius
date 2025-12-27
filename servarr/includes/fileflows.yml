@@ -1,0 +1,32 @@
+volumes:
+  fileflows_cache:
+
+services:
+  fileflows:
+    container_name: fileflows
+    image: revenz/fileflows:stable
+    user: 568:568
+    ports:
+      - 5000:5000
+    env_file:
+      - ../stack.env
+    environment:
+      PUID: 568
+      PGID: 568
+      NVIDIA_DRIVER_CAPABILITIES: compute,video,utility
+      NVIDIA_VISIBLE_DEVICES: all
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
+    volumes:
+      - "${FILEFLOWS_MOUNT_PATH}/data:/app/Data"
+      - "${MEDIA_MOUNT_PATH}:/media"
+      - fileflows_cache:/temp
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: unless-stopped

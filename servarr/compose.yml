@@ -16,5 +16,6 @@ include:
   - includes/recyclarr.yml
   - includes/cleanuparr.yml
   - includes/autobrr.yml
+  - includes/fileflows.yml
 
 services: {}
