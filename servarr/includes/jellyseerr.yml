@@ -7,8 +7,7 @@ services:
     env_file:
       - ../stack.env
     depends_on:
-      jellyseerr-postgres:
-        condition: service_healthy
+      - jellyseerr-postgres
     environment:
       DB_TYPE: postgres
       DB_HOST: jellyseerr-postgres
@@ -39,11 +38,6 @@ services:
       POSTGRES_DB: "${JELLYSEERR_DB_NAME}"
       POSTGRES_USER: "${JELLYSEERR_DB_USER}"
       POSTGRES_PASSWORD: "${JELLYSEERR_DB_PASSWORD}"
-    healthcheck:
-      test: [ "CMD-SHELL", "sh -c 'pg_isready -U ${JELLYSEERR_DB_USER} -d ${JELLYSEERR_DB_NAME}'" ]
-      interval: 10s
-      timeout: 3s
-      retries: 3
     deploy:
       resources:
         limits:
