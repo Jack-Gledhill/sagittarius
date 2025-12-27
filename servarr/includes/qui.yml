@@ -1,0 +1,22 @@
+services:
+  qui:
+    container_name: qui
+    image: ghcr.io/autobrr/qui:latest
+    user: 568:568
+    ports:
+      - 7476:7476
+      - 9074:9074
+    env_file:
+      - ../stack.env
+    environment:
+      QUI__SESSION_SECRET: "${QUI_SESSION_SECRET}"
+      QUI__METRICS_ENABLED: true
+      QUI__OIDC_ENABLED: true
+      QUI__OIDC_DISABLE_BUILT_IN_LOGIN: true
+      QUI__OIDC_ISSUER: "${QUI_OIDC_ISSUER}"
+      QUI__OIDC_CLIENT_ID: "${QUI_OIDC_CLIENT_ID}"
+      QUI__OIDC_CLIENT_SECRET: "${QUI_OIDC_CLIENT_SECRET}"
+      QUI__OIDC_REDIRECT_URL: "${QUI_OIDC_REDIRECT_URL}"
+    volumes:
+      - "${QUI_MOUNT_PATH}/config:/config"
+    restart: unless-stopped

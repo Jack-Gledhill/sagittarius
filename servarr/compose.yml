@@ -2,10 +2,19 @@ name: servarr
 
 include:
   - includes/qbittorrent.yml
+  - includes/qui.yml
   - includes/jellyfin.yml
   - includes/jellyseerr.yml
   - includes/jellystat.yml
   - includes/bazarr.yml
+  - includes/prowlarr.yml
+  - includes/radarr.yml
+  - includes/sonarr.yml
+  - includes/lidarr.yml
   - includes/tdarr.yml
+  - includes/unpackerr.yml
+  - includes/recyclarr.yml
+  - includes/cleanuparr.yml
+  - includes/autobrr.yml
 
 services: {}

@@ -1,0 +1,21 @@
+services:
+  radarr:
+    container_name: radarr
+    image: linuxserver/radarr:latest
+    user: 568:568
+    ports:
+      - 7878:7878
+    env_file:
+      - ../stack.env
+    environment:
+      PUID: 568
+      PGID: 568
+    volumes:
+      - "${RADARR_MOUNT_PATH}/config:/config"
+      - "${MEDIA_MOUNT_PATH}/movies:/movies"
+      - "${MEDIA_MOUNT_PATH}/downloads:/downloads"
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    restart: unless-stopped

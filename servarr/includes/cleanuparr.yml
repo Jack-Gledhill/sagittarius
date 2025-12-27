@@ -1,0 +1,26 @@
+services:
+  cleanuparr:
+    container_name: cleanuparr
+    image: ghcr.io/cleanuparr/cleanuparr:latest
+    user: 568:568
+    ports:
+      - 11011:11011
+    env_file:
+      - ../stack.env
+    environment:
+      PUID: 568
+      PGID: 568
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11011/health"]
+      interval: 30s
+      timeout: 10s
+      start_period: 30s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    volumes:
+      - "${CLEANUPARR_MOUNT_PATH}/config:/config"
+      - "${MEDIA_MOUNT_PATH}/downloads:/downloads"
+    restart: unless-stopped
