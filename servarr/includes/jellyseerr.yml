@@ -32,18 +32,18 @@ services:
   jellyseerr-postgres:
     container_name: jellyseerr-postgres
     image: postgres:18-alpine
-    user: 568:568
     env_file:
       - ../stack.env
     environment:
       POSTGRES_DB: "${JELLYSEERR_DB_NAME}"
       POSTGRES_USER: "${JELLYSEERR_DB_USER}"
       POSTGRES_PASSWORD: "${JELLYSEERR_DB_PASSWORD}"
+      POSTGRES_INITDB_ARGS: "--data-checksums"
     deploy:
       resources:
         limits:
           memory: 200M
     shm_size: 128mb
     volumes:
-      - "${DATABASE_MOUNT_PATH}/jellyseerr:/var/lib/postgresql"
+      - "${DATABASE_MOUNT_PATH}/jellyseerr:/var/lib/postgresql/18/docker"
     restart: unless-stopped
