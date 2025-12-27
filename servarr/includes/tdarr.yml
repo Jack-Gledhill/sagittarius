@@ -7,6 +7,8 @@ services:
     image: haveagitgat/tdarr:latest
     ports:
       - 8265:8265
+    env_file:
+      - ../stack.env
     environment:
       internalNode: true
       inContainer: true

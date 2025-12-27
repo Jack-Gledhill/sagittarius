@@ -1,0 +1,49 @@
+services:
+  jellyseerr:
+    container_name: jellyseerr
+    image: ghcr.io/fallenbagel/jellyseerr:latest
+    ports:
+      - 5055:5055
+    env_file:
+      - ../stack.env
+    depends_on:
+      jellyseerr-postgres:
+        condition: service_healthy
+    environment:
+      DB_TYPE: postgres
+      DB_HOST: jellyseerr-postgres
+      DB_PORT: 5432
+      DB_NAME: "${JELLYSEERR_DB_NAME}"
+      DB_USER: "${JELLYSEERR_DB_USER}"
+      DB_PASS: "${JELLYSEERR_DB_PASSWORD}"
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:5055/api/v1/status || exit 1
+      start_period: 20s
+      timeout: 3s
+      interval: 15s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          memory: 500Mi
+    volumes:
+      - "${JELLYSEERR_MOUNT_PATH}/config:/app/config"
+    restart: unless-stopped
+
+  jellyseerr-postgres:
+    container_name: jellyseerr-postgres
+    image: postgres:18
+    env_file:
+      - ../stack.env
+    environment:
+      POSTGRES_DB: "${JELLYSEERR_DB_NAME}"
+      POSTGRES_USER: "${JELLYSEERR_DB_USER}"
+      POSTGRES_PASSWORD: "${JELLYSEERR_DB_PASSWORD}"
+    deploy:
+      resources:
+        limits:
+          memory: 200M
+    shm_size: 128mb
+    volumes:
+      - "${DATABASE_MOUNT_PATH}/jellyseerr:/var/lib/postgresql"
+    restart: unless-stopped
