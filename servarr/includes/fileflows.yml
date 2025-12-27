@@ -5,14 +5,11 @@ services:
   fileflows:
     container_name: fileflows
     image: revenz/fileflows:stable
-    user: 568:568
     ports:
       - 5000:5000
     env_file:
       - ../stack.env
     environment:
-      PUID: 568
-      PGID: 568
       NVIDIA_DRIVER_CAPABILITIES: compute,video,utility
       NVIDIA_VISIBLE_DEVICES: all
     deploy:
