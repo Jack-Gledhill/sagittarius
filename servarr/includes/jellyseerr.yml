@@ -39,6 +39,11 @@ services:
       POSTGRES_DB: "${JELLYSEERR_DB_NAME}"
       POSTGRES_USER: "${JELLYSEERR_DB_USER}"
       POSTGRES_PASSWORD: "${JELLYSEERR_DB_PASSWORD}"
+    healthcheck:
+      test: [ "CMD-SHELL", "sh -c 'pg_isready -U ${JELLYSEERR_DB_USER} -d ${JELLYSEERR_DB_NAME}'" ]
+      interval: 10s
+      timeout: 3s
+      retries: 3
     deploy:
       resources:
         limits:
