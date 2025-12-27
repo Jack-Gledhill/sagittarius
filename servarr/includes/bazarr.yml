@@ -1,0 +1,17 @@
+services:
+  bazarr:
+    container_name: bazarr
+    image: linuxserver/bazarr:latest
+    user: 568:568
+    ports:
+      - 6767:6767
+    env_file:
+      - ../stack.env
+    environment:
+      PUID: 568
+      PGID: 568
+    volumes:
+      - "${BAZARR_MOUNT_PATH}/config:/config"
+      - "${MEDIA_MOUNT_PATH}/movies:/movies"
+      - "${MEDIA_MOUNT_PATH}/shows:/tv"
+    restart: unless-stopped

@@ -4,6 +4,7 @@ include:
   - includes/jellyfin.yml
   - includes/jellyseerr.yml
   - includes/jellystat.yml
+  - includes/bazarr.yml
   - includes/tdarr.yml
 
 services: {}
