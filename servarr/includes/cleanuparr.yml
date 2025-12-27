@@ -2,14 +2,10 @@ services:
   cleanuparr:
     container_name: cleanuparr
     image: ghcr.io/cleanuparr/cleanuparr:latest
-    user: 1000:1000
     ports:
       - 11011:11011
     env_file:
       - ../stack.env
-    environment:
-      PUID: 1000
-      PGID: 1000
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:11011/health"]
       interval: 30s
