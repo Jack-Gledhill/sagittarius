@@ -3,10 +3,7 @@ services:
     container_name: qbittorrent
     image: linuxserver/qbittorrent:latest
     user: 568:568
-    ports:
-      - 6881:6881/tcp
-      - 6881:6881/udp
-      - 8080:8080
+    network_mode: "service:gluetun"
     env_file:
       - ../stack.env
     environment:
@@ -17,8 +14,33 @@ services:
     deploy:
       resources:
         limits:
-          memory: 2G
+          memory: 4G
     volumes:
       - "${QBITTORRENT_MOUNT_PATH}/config:/config"
       - "${MEDIA_MOUNT_PATH}/downloads:/downloads"
+    restart: unless-stopped
+
+  gluetun:
+    container_name: gluetun
+    image: qmcgaw/gluetun:latest
+    ports:
+      # Exposes qBittorrent's ports
+      - 6881:6881/tcp
+      - 6881:6881/udp
+      - 8080:8080
+    cap_add:
+      - NET_ADMIN
+    env_file:
+      - ../stack.env
+    environment:
+      VPN_SERVICE_PROVIDER: custom
+      VPN_TYPE: wireguard
+      WIREGUARD_ENDPOINT_IP: "${GLUETUN_IP}"
+      WIREGUARD_ENDPOINT_PORT: "${GLUETUN_PORT}"
+      WIREGUARD_PUBLIC_KEY: "${GLUETUN_PUBLIC_KEY}"
+      WIREGUARD_PRIVATE_KEY: "${GLUETUN_PRIVATE_KEY}"
+      WIREGUARD_PRESHARED_KEY: "${GLUETUN_PRESHARED_KEY}"
+      WIREGUARD_ADDRESSES: "${GLUETUN_ADDRESSES}"
+    devices:
+      - /dev/net/tun:/dev/net/tun
     restart: unless-stopped
