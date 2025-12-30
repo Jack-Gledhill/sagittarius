@@ -41,6 +41,10 @@ services:
       WIREGUARD_PRIVATE_KEY: "${GLUETUN_PRIVATE_KEY}"
       WIREGUARD_PRESHARED_KEY: "${GLUETUN_PRESHARED_KEY}"
       WIREGUARD_ADDRESSES: "${GLUETUN_ADDRESSES}"
+    deploy:
+      resources:
+        limits:
+          memory: 1G
     devices:
       - /dev/net/tun:/dev/net/tun
     restart: unless-stopped
