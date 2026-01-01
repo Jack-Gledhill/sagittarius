@@ -33,9 +33,8 @@ services:
     env_file:
       - ../stack.env
     environment:
-      VPN_SERVICE_PROVIDER: protonvpn
+      VPN_SERVICE_PROVIDER: custom
       VPN_TYPE: wireguard
-      SERVER_COUNTRIES: Netherlands
       WIREGUARD_ENDPOINT_IP: "${GLUETUN_IP}"
       WIREGUARD_ENDPOINT_PORT: "${GLUETUN_PORT}"
       WIREGUARD_PUBLIC_KEY: "${GLUETUN_PUBLIC_KEY}"
