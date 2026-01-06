@@ -7,6 +7,8 @@ services:
       - ../stack.env
     environment:
       CLAMD_CONF_StreamMaxLength: "${AV_MAX_SIZE}"
+      PUID: 0
+      PGID: 0
     deploy:
       resources:
         limits:
