@@ -2,13 +2,10 @@ services:
   clamav:
     container_name: clamav
     image: clamav/clamav:latest
-    user: 1:1
     env_file:
       - ../stack.env
     environment:
       CLAMD_CONF_StreamMaxLength: "${AV_MAX_SIZE}"
-      PUID: 1
-      PGID: 1
     deploy:
       resources:
         limits:
