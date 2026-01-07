@@ -25,7 +25,7 @@ services:
       - ../files/proxy.yaml:/etc/opencloud/proxy.yaml:ro
       - "${OC_MOUNT_BASE}/config:/etc/opencloud"
       - "${OC_MOUNT_BASE}/data:/var/lib/opencloud"
-      - /var/run/clamav:/var/run/clamav
+      - clamav-socket:/var/run/clamav
     env_file:
       - ../stack.env
     environment:

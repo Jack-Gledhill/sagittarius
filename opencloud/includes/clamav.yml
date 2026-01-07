@@ -1,3 +1,6 @@
+volumes:
+  clamav-socket:
+
 services:
   clamav:
     container_name: clamav
@@ -17,5 +20,5 @@ services:
       - SETGID
       - SETUID
     volumes:
-      - /var/run/clamav:/tmp
+      - clamav-socket:/tmp
     restart: unless-stopped
