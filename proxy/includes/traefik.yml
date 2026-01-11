@@ -6,8 +6,8 @@ services:
     container_name: traefik
     image: traefik:v3.4
     ports:
-      - 8080:80
-      - 4430:443
+      - 81:80
+      - 444:443
     env_file:
       - ../stack.env
     environment:
