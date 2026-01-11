@@ -11,6 +11,8 @@ services:
       resources:
         limits:
           memory: 4G
+    ports:
+      - 9980:9980
     cap_add:
       - MKNOD
     healthcheck:
@@ -18,12 +20,15 @@ services:
       interval: 15s
       timeout: 10s
       retries: 5
-    ports:
-      - 9980:9980
     restart: unless-stopped
     volumes:
       - /usr/share/fonts/truetype:/opt/cool/systemplate/usr/share/fonts/truetype/more:ro
       - /usr/share/fonts/truetype:/usr/share/fonts/truetype:ro
+    labels:
+      traefik.enable: true
+      traefik.http.routers.collabora.rule: Host(`office.starsystem.dev`)
+      traefik.http.routers.collabora.entrypoints: websecure
+      traefik.http.services.collabora.loadbalancer.server.port: 9980
     environment:
       DONT_GEN_SSL_CERT: true
       dictionaries: en_GB
@@ -61,12 +66,17 @@ services:
         condition: service_started
       collabora:
         condition: service_started
-    ports:
-      - 9300:9300
     volumes:
       - ../files/csp.yaml:/etc/opencloud/csp.yaml:ro
       - ../files/proxy.yaml:/etc/opencloud/proxy.yaml:ro
     restart: unless-stopped
+    ports:
+      - 9300:9300
+    labels:
+      traefik.enable: true
+      traefik.http.routers.wopi.rule: Host(`wopi.starsystem.dev`)
+      traefik.http.routers.wopi.entrypoints: websecure
+      traefik.http.services.wopi.loadbalancer.server.port: 9300
     env_file:
       - ../stack.env
     environment:

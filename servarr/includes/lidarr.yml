@@ -18,4 +18,9 @@ services:
       resources:
         limits:
           memory: 500M
+    labels:
+      traefik.enable: true
+      traefik.http.routers.lidarr.rule: Host(`lidarr.starsystem.dev`)
+      traefik.http.routers.lidarr.entrypoints: websecure
+      traefik.http.services.lidarr.loadbalancer.server.port: 8686
     restart: unless-stopped

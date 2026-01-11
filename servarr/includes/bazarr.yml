@@ -14,4 +14,9 @@ services:
       - "${BAZARR_MOUNT_PATH}/config:/config"
       - "${MEDIA_MOUNT_PATH}/movies:/movies"
       - "${MEDIA_MOUNT_PATH}/shows:/tv"
+    labels:
+      traefik.enable: true
+      traefik.http.routers.bazarr.rule: Host(`bazarr.starsystem.dev`)
+      traefik.http.routers.bazarr.entrypoints: websecure
+      traefik.http.services.bazarr.loadbalancer.server.port: 6767
     restart: unless-stopped

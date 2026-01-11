@@ -19,4 +19,9 @@ services:
     volumes:
       - "${CLEANUPARR_MOUNT_PATH}/config:/config"
       - "${MEDIA_MOUNT_PATH}/downloads:/downloads"
+    labels:
+      traefik.enable: true
+      traefik.http.routers.cleanuparr.rule: Host(`cleanuparr.starsystem.dev`)
+      traefik.http.routers.cleanuparr.entrypoints: websecure
+      traefik.http.services.cleanuparr.loadbalancer.server.port: 11011
     restart: unless-stopped

@@ -30,4 +30,9 @@ services:
       - "${JELLYFIN_MOUNT_BASE}/config:/config"
       - "${JELLYFIN_MOUNT_BASE}/data:/data"
       - "${MEDIA_MOUNT_PATH}:/media"
+    labels:
+      traefik.enable: true
+      traefik.http.routers.jellyfin.rule: Host(`jellyfin.starsystem.dev`)
+      traefik.http.routers.jellyfin.entrypoints: websecure
+      traefik.http.services.jellyfin.loadbalancer.server.port: 8096
     restart: unless-stopped

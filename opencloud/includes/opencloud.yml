@@ -8,8 +8,6 @@ services:
     command:
       - -c
       - opencloud init || true; opencloud server
-    ports:
-      - 9200:9200
     depends_on:
       clamav:
         condition: service_healthy
@@ -26,6 +24,13 @@ services:
       - "${OC_MOUNT_BASE}/config:/etc/opencloud"
       - "${OC_MOUNT_BASE}/data:/var/lib/opencloud"
       - clamav-socket:/var/run/clamav
+    ports:
+      - 9200:9200
+    labels:
+      traefik.enable: true
+      traefik.http.routers.opencloud.rule: Host(`cloud.starsystem.dev`)
+      traefik.http.routers.opencloud.entrypoints: websecure
+      traefik.http.services.opencloud.loadbalancer.server.port: 9200
     env_file:
       - ../stack.env
     environment:

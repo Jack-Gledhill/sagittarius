@@ -5,8 +5,8 @@ services:
   prometheus:
     container_name: prometheus
     image: prom/prometheus:latest
-    ports:
-      - 9090:9090
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
     deploy:
       resources:
         limits:
@@ -22,3 +22,9 @@ services:
       - prometheus:/prometheus # This data isn't critical long-term, so a named volume is fine
       - /var/run/docker.sock:/var/run/docker.sock:ro # Used for Docker service discovery
     restart: unless-stopped
+    labels:
+      traefik.enable: true
+      traefik.http.routers.prometheus.rule: Host(`prometheus.sagittarius.starsystem.dev`)
+      traefik.http.routers.prometheus.entrypoints: websecure
+      traefik.http.routers.prometheus.middlewares: intranet-only@docker,basic-auth@docker
+      traefik.http.services.prometheus.loadbalancer.server.port: 9090

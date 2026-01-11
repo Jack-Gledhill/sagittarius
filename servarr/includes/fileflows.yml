@@ -26,4 +26,9 @@ services:
       - "${MEDIA_MOUNT_PATH}:/media"
       - fileflows_cache:/temp
       - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      traefik.enable: true
+      traefik.http.routers.fileflows.rule: Host(`fileflows.starsystem.dev`)
+      traefik.http.routers.fileflows.entrypoints: websecure
+      traefik.http.services.fileflows.loadbalancer.server.port: 5000
     restart: unless-stopped

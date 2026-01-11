@@ -16,4 +16,9 @@ services:
       resources:
         limits:
           memory: 500M
+    labels:
+      traefik.enable: true
+      traefik.http.routers.prowlarr.rule: Host(`prowlarr.starsystem.dev`)
+      traefik.http.routers.prowlarr.entrypoints: websecure
+      traefik.http.services.prowlarr.loadbalancer.server.port: 9696
     restart: unless-stopped

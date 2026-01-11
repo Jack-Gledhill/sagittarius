@@ -47,4 +47,9 @@ services:
           memory: 1G
     devices:
       - /dev/net/tun:/dev/net/tun
+    labels:
+      traefik.enable: true
+      traefik.http.routers.qbittorrent.rule: Host(`qbittorrent.starsystem.dev`)
+      traefik.http.routers.qbittorrent.entrypoints: websecure
+      traefik.http.services.qbittorrent.loadbalancer.server.port: 8080
     restart: unless-stopped

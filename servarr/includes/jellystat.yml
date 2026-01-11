@@ -23,6 +23,11 @@ services:
           memory: 500M
     volumes:
       - "${JELLYSTAT_MOUNT_BASE}/backups:/app/backend/backup-data"
+    labels:
+      traefik.enable: true
+      traefik.http.routers.jellystat.rule: Host(`jellystat.starsystem.dev`)
+      traefik.http.routers.jellystat.entrypoints: websecure
+      traefik.http.services.jellystat.loadbalancer.server.port: 3000
     restart: unless-stopped
 
   jellystat-postgres:

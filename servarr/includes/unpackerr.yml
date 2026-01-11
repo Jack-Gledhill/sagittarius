@@ -3,8 +3,6 @@ services:
     container_name: unpackerr
     image: golift/unpackerr:latest
     user: 568:568
-    ports:
-      - 5656:5656
     env_file:
       - ../stack.env
     environment:
@@ -23,4 +21,9 @@ services:
       resources:
         limits:
           memory: 500M
+    labels:
+      prometheus.io/scrape: true
+      prometheus.io/path: /metrics
+      prometheus.io/port: 5656
+      prometheus.io/scheme: http
     restart: unless-stopped
