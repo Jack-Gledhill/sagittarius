@@ -5,7 +5,7 @@ services:
     ports:
       - 8080:8080
     env_file:
-      - stack.env
+      - ../stack.env
     environment:
       OLLAMA_BASE_URL: http://ollama:11434
       WEBUI_URL: "${OPENWEBUI_URL}"
