@@ -1,0 +1,6 @@
+name: proxy
+
+include:
+  - includes/traefik.yml
+
+services: {}
