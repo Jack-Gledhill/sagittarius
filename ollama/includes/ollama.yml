@@ -1,0 +1,25 @@
+volumes:
+  ollama-data:
+
+services:
+  ollama:
+    container_name: ollama
+    image: ollama/ollama:0.13.5
+    user: 0:0
+    env_file:
+      - stack.env
+    environment:
+      OLLAMA_VULKAN: 1
+      OLLAMA_HOST: 0.0.0.0:11434
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [ gpu ]
+        limits:
+          memory: 8G
+    volumes:
+      - ollama-data:/root/.ollama # This is just a cache of downloaded models, it's not worth persisting on a redundant pool
+    restart: unless-stopped

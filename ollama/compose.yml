@@ -1,29 +1,7 @@
 name: ollama
 
-volumes:
-  data:
+include:
+  - includes/ollama.yml.yml
+  - includes/open-webui.yml
 
-services:
-  ollama:
-    container_name: ollama
-    image: ollama/ollama:0.13.5
-    user: 0:0
-    ports:
-      - 11434:11434
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [ gpu ]
-        limits:
-          memory: 8G
-    restart: unless-stopped
-    volumes:
-      - data:/root/.ollama
-    env_file:
-      - stack.env
-    environment:
-      OLLAMA_VULKAN: 1
-      OLLAMA_HOST: 0.0.0.0:11434
+services: {}
