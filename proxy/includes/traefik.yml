@@ -70,10 +70,10 @@ services:
       prometheus.io/scheme: http
 
       traefik.http.middlewares.basic-auth.basicauth.users: admin:$$2a$$10$$exyQCQJznXreEzOoZ8E9Q.LRnkuzDv9Q5bAg6jPccr56j087Tu4C6
-      traefik.http.middlewares.vpn-only.ipallowlist.sourcerange: 10.0.0.0/8,127.0.0.1
+      traefik.http.middlewares.intranet-only.ipallowlist.sourcerange: 127.0.0.1,172.16.0.0/16,10.0.0.0/8 # Includes loopback, Docker bridge & internal network
 
       traefik.enable: true
       traefik.http.routers.traefik-dashboard.rule: Host(`traefik.sagittarius.starsystem.dev`) && (PathPrefix(`/dashboard`) || PathPrefix(`/api`))
       traefik.http.routers.traefik-dashboard.entrypoints: websecure
-      traefik.http.routers.traefik-dashboard.middlewares: vpn-only@docker,basic-auth@docker
+      traefik.http.routers.traefik-dashboard.middlewares: intranet-only@docker,basic-auth@docker
       traefik.http.services.traefik-dashboard.loadbalancer.server.port: 8080
