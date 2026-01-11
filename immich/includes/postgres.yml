@@ -2,10 +2,6 @@ services:
   postgres:
     container_name: immich-postgres
     image: ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0
-    deploy:
-      resources:
-        limits:
-          memory: 1G
     env_file:
       - ../stack.env
     environment:
@@ -14,6 +10,10 @@ services:
     # Shared memory size, not sure why this is needed but the devs recommend this so I'm sure there's a good reason
     # See here: https://docs.docker.com/reference/compose-file/services/#shm_size
     shm_size: 128mb
+    deploy:
+      resources:
+        limits:
+          memory: 1G
     volumes:
       - "${MOUNT_BASE_PATH}/postgres:/var/lib/postgresql/data"
     restart: unless-stopped

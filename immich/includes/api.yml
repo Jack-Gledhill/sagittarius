@@ -2,18 +2,25 @@ services:
   api:
     container_name: immich-api
     image: ghcr.io/immich-app/immich-server:v2
-    ports:
-      - 2283:2283
-      # - 8081:8081 # Metrics
-    deploy:
-      resources:
-        limits:
-          memory: 500M
     env_file:
       - ../stack.env
     environment:
       IMMICH_WORKERS_INCLUDE: api
-    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 500M
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - "${MOUNT_BASE_PATH}/library:/data"
+    restart: unless-stopped
+    labels:
+      prometheus.io/scrape: true
+      prometheus.io/path: /metrics
+      prometheus.io/port: 8081
+      prometheus.io/scheme: http
+
+      traefik.enable: true
+      traefik.http.routers.immich.rule: Host(`photos.starsystem.dev`)
+      traefik.http.routers.immich.entrypoints: websecure
+      traefik.http.services.immich.loadbalancer.server.port: 2283

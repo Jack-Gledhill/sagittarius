@@ -2,8 +2,6 @@ services:
   workers:
     container_name: immich-workers
     image: ghcr.io/immich-app/immich-server:v2
-#    ports:
-#      - 8082:8082 # Metrics
     environment:
       IMMICH_WORKERS_EXCLUDE: api
     env_file:
@@ -25,3 +23,8 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - "${MOUNT_BASE_PATH}/library:/data"
     restart: unless-stopped
+    labels:
+      prometheus.io/scrape: true
+      prometheus.io/path: /metrics
+      prometheus.io/port: 8082
+      prometheus.io/scheme: http
