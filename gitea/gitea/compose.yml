@@ -60,3 +60,5 @@ services:
       - "--restricted-group=${OIDC_RESTRICTED_GROUP}"
       - "--skip-local-2fa=true"
       - "--icon-url=${OIDC_ISSUER_URL}/favicon.ico"
+    volumes:
+      - "${DATA_PATH}:/data"
