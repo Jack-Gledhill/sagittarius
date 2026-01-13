@@ -1,0 +1,62 @@
+services:
+#  gitea:
+#    container_name: gitea
+#    image: docker.io/gitea/gitea:latest
+#    depends_on:
+#      - gitea-postgres
+#    restart: unless-stopped
+#    deploy:
+#      resources:
+#        limits:
+#          memory: 500M
+#    ports:
+#      - "2222:2222"
+#    volumes:
+#      - "${DATA_PATH}:/data"
+#    labels:
+#      traefik.enable: true
+#      traefik.http.routers.gitea.rule: "Host(`${DOMAIN}`)"
+#      traefik.http.routers.gitea.entrypoints: websecure
+#      traefik.http.services.gitea.loadbalancer.server.port: 3000
+#    env_file:
+#      - gitea.env
+
+  gitea-postgres:
+    container_name: gitea-postgres
+    image: postgres:18-alpine
+    restart: unless-stopped
+    shm_size: 128mb
+    deploy:
+      resources:
+        limits:
+          memory: 200M
+    volumes:
+      - "${DB_PATH}:/var/lib/postgresql/18/docker"
+    env_file:
+      - postgres.env
+
+  add-oidc:
+    container_name: gitea-add-oidc
+    image: docker.io/gitea/gitea:latest-rootless
+    depends_on:
+      - gitea
+    restart: on-failure
+    entrypoint: [ "/bin/sh", "-c" ]
+    command:
+      - "gitea"
+      - "admin"
+      - "auth"
+      - "add-oauth"
+      - "-c"
+      - "/data/gitea/conf/app.ini"
+      - "--provider=openidConnect"
+      - "--name=Authelia"
+      - "--key=${OIDC_CLIENT_ID}"
+      - "--secret=${OIDC_CLIENT_SECRET}"
+      - "--auto-discover-url=${OIDC_ISSUER_URL}/.well-known/openid-configuration"
+      - "--scopes=${OIDC_SCOPES}"
+      - "--group-claim-name=groups"
+      - "--admin-group=${OIDC_ADMIN_GROUP}"
+      - "--restricted-group=${OIDC_RESTRICTED_GROUP}"
+      - "--skip-local-2fa=true"
+      - "--icon-url=${OIDC_ISSUER_URL}/favicon.ico"

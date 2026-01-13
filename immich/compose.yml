@@ -1,10 +1,109 @@
 name: immich
 
-include:
-  - includes/redis.yml
-  - includes/postgres.yml
-  - includes/api.yml
-  - includes/workers.yml
-  - includes/ml.yml
+volumes:
+  ml-cache:
 
-services: {}
+services:
+  immich:
+    container_name: immich
+    image: ghcr.io/immich-app/immich-server:v2
+    environment:
+      IMMICH_TELEMETRY_INCLUDE: all
+      IMMICH_MACHINE_LEARNING_URL: http://machine-learning:3003
+      DB_HOSTNAME: postgres
+      DB_PORT: 5432
+      DB_DATABASE_NAME: immich
+      DB_USERNAME: immich
+      DB_PASSWORD: "${DB_PASSWORD}"
+      REDIS_HOSTNAME: redis
+      REDIS_PORT: 6379
+      REDIS_DBINDEX: 0
+    deploy:
+      resources:
+        limits:
+          memory: 5G
+        # Enables hardware transcoding via the dedicated GPU
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities:
+                - gpu
+                - compute
+                - video
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - "${LIBRARY_PATH}:/data"
+    restart: unless-stopped
+    labels:
+      prometheus.io/scrape: true
+      prometheus.io/path: /metrics
+      prometheus.io/port: 8081
+      prometheus.io/scheme: http
+
+      traefik.enable: true
+      traefik.http.routers.immich.rule: "Host(`${IMMICH_DOMAIN}`)"
+      traefik.http.routers.immich.entrypoints: websecure
+      traefik.http.services.immich.loadbalancer.server.port: 2283
+
+  machine-learning:
+    container_name: immich-machine-learning
+    image: ghcr.io/immich-app/immich-machine-learning:v2-cuda # The -cuda here enables hardware acceleration
+    env_file:
+      - .env
+    environment:
+      DB_HOSTNAME: postgres
+      DB_PORT: 5432
+      DB_DATABASE_NAME: immich
+      DB_USERNAME: immich
+      DB_PASSWORD: "${DB_PASSWORD}"
+      REDIS_HOSTNAME: redis
+      REDIS_PORT: 6379
+      REDIS_DBINDEX: 0
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+        # Enables hardware acceleration
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities:
+                - gpu
+    volumes:
+      - ml-cache:/cache # This is just a cache of downloaded models, there's no need to keep it in a specific place or backup it up
+    restart: unless-stopped
+
+  postgres:
+    container_name: immich-postgres
+    image: ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0
+    env_file:
+      - .env
+    environment:
+      POSTGRES_INITDB_ARGS: '--data-checksums'
+      POSTGRES_USER: immich
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+      POSTGRES_DB: immich
+      DB_STORAGE_TYPE: HDD # Sagittarius runs on HDDs, this should help optimise things a bit
+    # Shared memory size, not sure why this is needed but the devs recommend this so I'm sure there's a good reason
+    # See here: https://docs.docker.com/reference/compose-file/services/#shm_size
+    shm_size: 128mb
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+    volumes:
+      - "${DATABASE_PATH}:/var/lib/postgresql/data"
+    restart: unless-stopped
+
+  redis:
+    container_name: immich-redis
+    image: docker.io/valkey/valkey:9 # Valkey is a drop-in Redis replacement, Immich's devs recommend this so I'll use it too
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+    healthcheck:
+      test: redis-cli ping || exit 1
+    restart: unless-stopped

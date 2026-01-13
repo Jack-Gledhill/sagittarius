@@ -1,7 +1,0 @@
-name: ollama
-
-include:
-  - includes/ollama.yml
-  - includes/open-webui.yml
-
-services: {}

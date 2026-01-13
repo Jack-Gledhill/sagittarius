@@ -1,0 +1,17 @@
+services:
+  bazarr:
+    container_name: bazarr
+    image: linuxserver/bazarr:latest
+    restart: unless-stopped
+    user: 568:568
+    volumes:
+      - "${BAZARR_PATH}:/config"
+      - "${MOVIES_PATH}:/movies"
+      - "${SHOWS_PATH}:/tv"
+    env_file:
+      - app.env
+    labels:
+      traefik.enable: true
+      traefik.http.routers.bazarr.rule: "Host(`${BAZARR_DOMAIN}`)"
+      traefik.http.routers.bazarr.entrypoints: websecure
+      traefik.http.services.bazarr.loadbalancer.server.port: 6767

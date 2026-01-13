@@ -1,0 +1,30 @@
+volumes:
+  prometheus:
+
+services:
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:latest
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    healthcheck:
+      test: [ "CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9090/-/healthy" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus:/prometheus # This data isn't critical long-term, so a named volume is fine
+      - /var/run/docker.sock:/var/run/docker.sock:ro # Used for Docker service discovery
+    labels:
+      traefik.enable: true
+      traefik.http.routers.prometheus.rule: "Host(`${PROMETHEUS_DOMAIN}`)"
+      traefik.http.routers.prometheus.entrypoints: websecure
+      traefik.http.routers.prometheus.middlewares: intranet-only@docker,basic-auth@docker
+      traefik.http.services.prometheus.loadbalancer.server.port: 9090

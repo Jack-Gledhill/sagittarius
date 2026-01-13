@@ -1,0 +1,11 @@
+name: oidc
+
+secrets:
+  smtp_password:
+    environment: "SMTP_PASSWORD"
+
+include:
+  - lldap/compose.yml
+  - authelia/compose.yml
+
+services: {}

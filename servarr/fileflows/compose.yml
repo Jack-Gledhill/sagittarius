@@ -1,0 +1,29 @@
+volumes:
+  fileflows-cache:
+
+services:
+  fileflows:
+    container_name: fileflows
+    image: revenz/fileflows:stable
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
+    volumes:
+      - "${FILEFLOWS_PATH}:/app/Data"
+      - "${MEDIA_PATH}:/media"
+      - fileflows-cache:/temp
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    env_file:
+      - app.env
+    labels:
+      traefik.enable: true
+      traefik.http.routers.fileflows.rule: "Host(`${FILEFLOWS_DOMAIN}`)"
+      traefik.http.routers.fileflows.entrypoints: websecure
+      traefik.http.services.fileflows.loadbalancer.server.port: 5000

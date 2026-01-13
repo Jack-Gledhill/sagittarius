@@ -1,0 +1,39 @@
+services:
+  collabora:
+    container_name: collabora
+    image: collabora/code:25.04.8.1.1
+    entrypoint: [ "/bin/sh", "-c" ]
+    command: [ "coolconfig generate-proof-key && /start-collabora-online.sh" ]
+    cap_add: [ "MKNOD" ]
+    restart: unless-stopped
+    env_file:
+      - app.env
+    environment:
+      extra_params: |-
+        --o:welcome.enable=false 
+        --o:user_interface.mode=tabbed 
+        --o:ssl.termination=true 
+        --o:ssl.enable=false 
+        --o:home_mode.enable=true 
+        --o:num_prespawn_children=${COLLABORA_NUM_PRESPAWN}
+        --o:per_document.max_concurrency=${COLLABORA_MAX_CONCURRENCY}
+        --o:overwrite_mode=false 
+        --o:net.frame_ancestors=${OPENCLOUD_DOMAIN}
+        --o:net.lok_allow.host[14]=${OPENCLOUD_DOMAIN}
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9980/hosting/discovery" ]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - /usr/share/fonts/truetype:/opt/cool/systemplate/usr/share/fonts/truetype/more:ro
+      - /usr/share/fonts/truetype:/usr/share/fonts/truetype:ro
+    labels:
+      traefik.enable: true
+      traefik.http.routers.collabora.rule: "Host(`${COLLABORA_DOMAIN}`)"
+      traefik.http.routers.collabora.entrypoints: websecure
+      traefik.http.services.collabora.loadbalancer.server.port: 9980

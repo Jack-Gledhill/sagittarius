@@ -1,0 +1,13 @@
+services:
+  radicale:
+    container_name: radicale
+    image: opencloudeu/radicale:latest
+    user: 568:568
+    deploy:
+      resources:
+        limits:
+          memory: 200M
+    volumes:
+      - ./config:/etc/radicale/config
+      - "${OPENCLOUD_RADICALE_PATH}:/var/lib/radicale"
+    restart: unless-stopped

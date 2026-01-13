@@ -1,11 +1,11 @@
 name: opencloud
 
 include:
-  - includes/clamav.yml
-  - includes/collabora.yml
-  - includes/opencloud.yml
-  - includes/radicale.yml
-  - includes/tika.yml
-  - includes/web-extensions.yml
+  - clamav/compose.yml
+  - collabora/compose.yml
+  - radicale/compose.yml
+  - tika/compose.yml
+  - web-extensions/compose.yml
+  - opencloud/compose.yml
 
 services: {}

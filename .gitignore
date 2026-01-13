@@ -1,6 +1,5 @@
 .idea/
 .vscode/
-*.env
-!stack.env
+.env
 !example.env
-wip.*
+secret.*

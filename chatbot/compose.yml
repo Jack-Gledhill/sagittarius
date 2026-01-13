@@ -1,0 +1,7 @@
+name: chatbot
+
+include:
+  - ollama/compose.yml
+  - open-webui/compose.yml
+
+services: {}

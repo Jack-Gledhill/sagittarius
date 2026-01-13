@@ -1,0 +1,16 @@
+services:
+  recyclarr:
+    container_name: recyclarr
+    image: recyclarr/recyclarr:latest
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    user: 568:568
+    read_only: true
+    tmpfs: /tmp
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - "${RECYCLARR_PATH}:/config"

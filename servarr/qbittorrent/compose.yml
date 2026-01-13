@@ -1,0 +1,35 @@
+services:
+  qbittorrent:
+    container_name: qbittorrent
+    image: linuxserver/qbittorrent:latest
+    network_mode: "service:gluetun"
+    restart: unless-stopped
+    user: 568:568
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+    env_file:
+      - app.env
+    volumes:
+      - "${QBITTORRENT_PATH}:/config"
+      - "${DOWNLOADS_PATH}:/downloads"
+
+  gluetun:
+    container_name: gluetun
+    image: qmcgaw/gluetun:latest
+    cap_add: [ "NET_ADMIN" ]
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    env_file:
+      - gluetun.env
+    labels:
+      traefik.enable: true
+      traefik.http.routers.qbittorrent.rule: "Host(`${QBITTORRENT_DOMAIN}`)"
+      traefik.http.routers.qbittorrent.entrypoints: websecure
+      traefik.http.services.qbittorrent.loadbalancer.server.port: 8080

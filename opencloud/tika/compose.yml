@@ -1,0 +1,10 @@
+services:
+  tika:
+    container_name: tika
+    image: apache/tika:latest
+    user: 568:568
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    restart: unless-stopped

@@ -1,0 +1,30 @@
+services:
+#  homarr:
+#    container_name: homarr
+#    image: ghcr.io/homarr-labs/homarr:latest
+#    restart: unless-stopped
+#    deploy:
+#      resources:
+#        limits:
+#          memory: 500M
+#    env_file:
+#      - app.env
+#    labels:
+#      traefik.enable: true
+#      traefik.http.routers.homarr.rule: "Host(`${HOMARR_DOMAIN}`)"
+#      traefik.http.routers.homarr.entrypoints: websecure
+#      traefik.http.services.homarr.loadbalancer.server.port: 7575
+
+  homarr-postgres:
+    container_name: homarr-postgres
+    image: postgres:18-alpine
+    restart: unless-stopped
+    shm_size: 128mb
+    deploy:
+      resources:
+        limits:
+          memory: 200M
+    volumes:
+      - "${HOMARR_DB_PATH}:/var/lib/postgresql/18/docker"
+    env_file:
+      - postgres.env
