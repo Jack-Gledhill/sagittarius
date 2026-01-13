@@ -43,7 +43,7 @@ services:
     restart: on-failure
     entrypoint: [ "/bin/sh", "-c" ]
     command:
-      - "gitea admin auth add-oauth --provider=openidConnect --name=Authelia --key=${OIDC_CLIENT_ID} --secret=${OIDC_CLIENT_SECRET} --auto-discover-url=${OIDC_ISSUER_URL}/.well-known/openid-configuration --scopes=${OIDC_SCOPES} --group-claim-name=groups --admin-group=${OIDC_ADMIN_GROUP} --restricted-group=${OIDC_RESTRICTED_GROUP} --skip-local-2fa=true --icon-url=${OIDC_ISSUER_URL}/favicon.ico"
+      - "gitea admin auth add-oauth --config=/data/gitea/conf/app.ini --provider=openidConnect --name=Authelia --key=${OIDC_CLIENT_ID} --secret=${OIDC_CLIENT_SECRET} --auto-discover-url=${OIDC_ISSUER_URL}/.well-known/openid-configuration --scopes=${OIDC_SCOPES} --group-claim-name=groups --admin-group=${OIDC_ADMIN_GROUP} --restricted-group=${OIDC_RESTRICTED_GROUP} --skip-local-2fa=true --icon-url=${OIDC_ISSUER_URL}/favicon.ico"
     volumes:
       - "${DATA_PATH}:/data"
     env_file:
