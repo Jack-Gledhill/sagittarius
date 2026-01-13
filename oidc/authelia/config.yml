@@ -36,7 +36,7 @@ access_control:
 identity_providers:
   oidc:
     jwks:
-      - key: {{ secret "/run/secrets/authelia_jwk_key" }}
+      - key: {{ secret "/run/secrets/authelia_jwk_key" | mindent 10 "|" | msquote }}
     cors:
       allowed_origins:
         - "*"
