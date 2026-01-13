@@ -41,7 +41,6 @@ services:
     depends_on:
       - gitea
     restart: on-failure
-    entrypoint: [ "/bin/sh", "-c" ]
     command:
       - |-
         gitea admin auth add-oauth 
