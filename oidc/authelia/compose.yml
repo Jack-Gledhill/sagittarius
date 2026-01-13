@@ -4,7 +4,7 @@ secrets:
   authelia_hmac_secret:
     environment: "AUTHELIA_HMAC_SECRET"
   authelia_jwk_key:
-    environment: "AUTHELIA_JWK_KEY"
+    file: "${AUTHELIA_JWK_KEY_PATH}"
   authelia_postgres_password:
     environment: "AUTHELIA_DB_PASSWORD"
   authelia_session_secret:
