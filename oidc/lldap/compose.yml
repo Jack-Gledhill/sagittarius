@@ -1,3 +1,9 @@
+secrets:
+  lldap_ssl_cert:
+    file: "${LLDAP_CERT_PATH}"
+  lldap_ssl_key:
+    file: "${LLDAP_KEY_PATH}"
+
 services:
   lldap:
     container_name: lldap
@@ -11,9 +17,9 @@ services:
           memory: 50M
     ports:
       - 636:636
-    volumes:
-      - "${LLDAP_CERT_PATH}:/ssl/cert.pem:ro"
-      - "${LLDAP_KEY_PATH}:/ssl/key.pem:ro"
+    secrets:
+      - lldap_ssl_cert
+      - lldap_ssl_key
     env_file:
       - app.env
     labels:
