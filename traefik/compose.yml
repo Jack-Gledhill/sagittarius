@@ -9,6 +9,7 @@ services:
     image: traefik:v3.4
     command:
       - --providers.docker=true
+      - -providers.docker.exposedbydefault=false
       - --global.sendanonymoususage=false
       - --log.level=INFO
       # Internal API & healthcheck
