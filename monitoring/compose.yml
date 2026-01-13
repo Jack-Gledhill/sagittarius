@@ -1,7 +1,0 @@
-name: monitoring
-
-include:
-  - includes/prometheus.yml
-  - includes/grafana.yml
-
-services: {}

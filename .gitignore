@@ -1,6 +1,2 @@
 .idea/
 .vscode/
-*.env
-!stack.env
-!example.env
-wip.*
