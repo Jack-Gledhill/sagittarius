@@ -19,18 +19,18 @@ services:
       # HTTP entrypoint
       - --entrypoints.web.address=:81
       - --entrypoints.web.forwardedheaders.insecure=false
-      - --entrypoints.web.forwardedheaders.trustedips=10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,fc00::/7
+      - --entrypoints.web.forwardedheaders.trustedips=10.0.0.0/8,172.16.0.0/16,172.17.0.0/16,192.168.0.0/16,fc00::/7
       - --entrypoints.web.proxyprotocol.insecure=false
-      - --entrypoints.web.proxyprotocol.trustedips=10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,fc00::/7
+      - --entrypoints.web.proxyprotocol.trustedips=10.0.0.0/8,172.16.0.0/16,172.17.0.0/16,192.168.0.0/16,fc00::/7
       - --entrypoints.web.http.redirections.entrypoint.to=websecure # Redirects HTTP requests to HTTPS
       - --entrypoints.web.http.redirections.entrypoint.scheme=https
       # HTTPS entrypoint
       - --entrypoints.websecure.address=:444
       - --entrypoints.websecure.http.tls=true
       - --entrypoints.websecure.forwardedheaders.insecure=false
-      - --entrypoints.websecure.forwardedheaders.trustedips=10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,fc00::/7
+      - --entrypoints.websecure.forwardedheaders.trustedips=10.0.0.0/8,172.16.0.0/16,172.17.0.0/16,192.168.0.0/16,fc00::/7
       - --entrypoints.websecure.proxyprotocol.insecure=false
-      - --entrypoints.websecure.proxyprotocol.trustedips=10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,fc00::/7
+      - --entrypoints.websecure.proxyprotocol.trustedips=10.0.0.0/8,172.16.0.0/16,172.17.0.0/16,192.168.0.0/16,fc00::/7
       - --entrypoints.websecure.http.tls.certresolver=letsencrypt
       - --entrypoints.websecure.http.tls.domains[0].main=${LE_DOMAIN}
       - --entrypoints.websecure.http.tls.domains[0].sans=${LE_SAN}
@@ -68,7 +68,7 @@ services:
       prometheus.io/scheme: http
 
       traefik.http.middlewares.basic-auth.basicauth.users: admin:$$2a$$10$$YxTb7Cy41ffQxZAUz/LR9e26yR.4Dk0zaakzyc0UpkC4Hrtmp6aam
-      traefik.http.middlewares.intranet-only.ipallowlist.sourcerange: 127.0.0.1,192.168.0.0/16,172.17.0.0/16,172.16.0.0/16,10.0.0.0/8,0.0.0.0/0 # Includes loopback, Docker bridge & private networks
+      traefik.http.middlewares.intranet-only.ipallowlist.sourcerange: 127.0.0.1,192.168.0.0/16,172.17.0.0/16,172.16.0.0/16,10.0.0.0/8 # Includes loopback, Docker bridge & private networks
 
       traefik.enable: true
       traefik.http.routers.traefik-dashboard.rule: "Host(`${DASHBOARD_DOMAIN}`) && (PathPrefix(`/dashboard`) || PathPrefix(`/api`))"
