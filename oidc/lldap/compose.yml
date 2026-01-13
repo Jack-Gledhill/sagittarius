@@ -1,26 +1,26 @@
 services:
-#  lldap:
-#    container_name: lldap
-#    image: lldap/lldap:stable
-#    depends_on:
-#      - lldap-postgres
-#    restart: unless-stopped
-#    deploy:
-#      resources:
-#        limits:
-#          memory: 50M
-#    ports:
-#      - 636:636
-#    volumes:
-#      - "${LLDAP_CERT_PATH}:/ssl/cert.pem:ro"
-#      - "${LLDAP_KEY_PATH}:/ssl/key.pem:ro"
-#    env_file:
-#      - app.env
-#    labels:
-#      traefik.enable: true
-#      traefik.http.routers.lldap.rule: "Host(`${LLDAP_DOMAIN}`)"
-#      traefik.http.routers.lldap.entrypoints: websecure
-#      traefik.http.services.lldap.loadbalancer.server.port: 17170
+  lldap:
+    container_name: lldap
+    image: lldap/lldap:stable
+    depends_on:
+      - lldap-postgres
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 50M
+    ports:
+      - 636:636
+    volumes:
+      - "${LLDAP_CERT_PATH}:/ssl/cert.pem:ro"
+      - "${LLDAP_KEY_PATH}:/ssl/key.pem:ro"
+    env_file:
+      - app.env
+    labels:
+      traefik.enable: true
+      traefik.http.routers.lldap.rule: "Host(`${LLDAP_DOMAIN}`)"
+      traefik.http.routers.lldap.entrypoints: websecure
+      traefik.http.services.lldap.loadbalancer.server.port: 17170
 
   lldap-postgres:
     container_name: lldap-postgres

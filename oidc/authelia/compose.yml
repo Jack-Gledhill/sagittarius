@@ -13,43 +13,43 @@ secrets:
     environment: "AUTHELIA_STORAGE_ENCRYPTION_KEY"
 
 services:
-#  authelia:
-#    container_name: authelia
-#    image: authelia/authelia:latest
-#    depends_on:
-#      - lldap
-#    command: [ "authelia", "--config=/config/config.yml", "--config.experimental.filters=template" ]
-#    restart: unless-stopped
-#    deploy:
-#      resources:
-#        limits:
-#          memory: 500M
-#    secrets:
-#      - authelia_ldap_password
-#      - authelia_hmac_secret
-#      - authelia_jwk_key
-#      - authelia_postgres_password
-#      - authelia_session_secret
-#      - authelia_storage_encryption_key
-#      - smtp_password
-#    volumes:
-#      - ./config.yml:/config/config.yml
-#    env_file:
-#      - app.env
-#    labels:
-#      prometheus.io/scrape: true
-#      prometheus.io/path: /metrics
-#      prometheus.io/port: 9959
-#      prometheus.io/scheme: http
-#
-#      traefik.enable: true
-#      traefik.http.routers.authelia.rule: "Host(`${AUTHELIA_DOMAIN}`)"
-#      traefik.http.routers.authelia.entrypoints: websecure
-#      traefik.http.services.authelia.loadbalancer.server.port: 9091
-#
-#      traefik.http.middlewares.authelia.forwardAuth.address: "https://${AUTHELIA_DOMAIN}/api/authz/forward-auth"
-#      traefik.http.middlewares.authelia.forwardAuth.trustForwardHeader: true
-#      traefik.http.middlewares.authelia.forwardAuth.authResponseHeaders: Remote-User,Remote-Groups,Remote-Email,Remote-Name
+  authelia:
+    container_name: authelia
+    image: authelia/authelia:latest
+    depends_on:
+      - lldap
+    command: [ "authelia", "--config=/config/config.yml", "--config.experimental.filters=template" ]
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    secrets:
+      - authelia_ldap_password
+      - authelia_hmac_secret
+      - authelia_jwk_key
+      - authelia_postgres_password
+      - authelia_session_secret
+      - authelia_storage_encryption_key
+      - smtp_password
+    volumes:
+      - ./config.yml:/config/config.yml
+    env_file:
+      - app.env
+    labels:
+      prometheus.io/scrape: true
+      prometheus.io/path: /metrics
+      prometheus.io/port: 9959
+      prometheus.io/scheme: http
+
+      traefik.enable: true
+      traefik.http.routers.authelia.rule: "Host(`${AUTHELIA_DOMAIN}`)"
+      traefik.http.routers.authelia.entrypoints: websecure
+      traefik.http.services.authelia.loadbalancer.server.port: 9091
+
+      traefik.http.middlewares.authelia.forwardAuth.address: "https://${AUTHELIA_DOMAIN}/api/authz/forward-auth"
+      traefik.http.middlewares.authelia.forwardAuth.trustForwardHeader: true
+      traefik.http.middlewares.authelia.forwardAuth.authResponseHeaders: Remote-User,Remote-Groups,Remote-Email,Remote-Name
 
   authelia-postgres:
     container_name: authelia-postgres
