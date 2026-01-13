@@ -16,6 +16,7 @@ services:
         limits:
           memory: 200M
     ports:
+      - 389:389
       - 636:636
     secrets:
       - lldap_ssl_cert
