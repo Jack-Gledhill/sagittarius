@@ -11,7 +11,7 @@ services:
       - --providers.docker=true
       - -providers.docker.exposedbydefault=false
       - --global.sendanonymoususage=false
-      - --log.level=INFO
+      - --log.level=DEBUG
       # Internal API & healthcheck
       - --ping # Enables the ping endpoint for healthchecking Traefik
       - --api.dashboard=true # Enables the Traefik dashboard
