@@ -1,2 +1,5 @@
 .idea/
 .vscode/
+.env
+!example.env
+secret.*
