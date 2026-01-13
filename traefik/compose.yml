@@ -61,7 +61,7 @@ services:
       - certs:/data # SSL certs should be persisted across restarts, but don't need to be backed up or made redundant
       - /var/run/docker.sock:/var/run/docker.sock:ro
     env_file:
-      - .env
+      - app.env
     labels:
       prometheus.io/scrape: true
       prometheus.io/path: /metrics
