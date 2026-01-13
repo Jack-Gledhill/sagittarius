@@ -34,7 +34,7 @@ services:
     container_name: opencloud-wopi
     image: opencloudeu/opencloud-rolling:latest
     depends_on:
-      - opencloud
+      - server
       - collabora
     entrypoint: [ "/bin/sh", "-c" ]
     command: [ "opencloud collaboration server" ]
