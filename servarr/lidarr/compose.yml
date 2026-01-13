@@ -1,0 +1,21 @@
+services:
+  lidarr:
+    container_name: lidarr
+    image: linuxserver/lidarr:latest
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    user: 568:568
+    volumes:
+      - "${LIDARR_PATH}:/config"
+      - "${MUSIC_PATH}:/music"
+      - "${DOWNLOADS_PATH}:/downloads"
+    env_file:
+      - app.env
+    labels:
+      traefik.enable: true
+      traefik.http.routers.lidarr.rule: "Host(`${LIDARR_DOMAIN}`)"
+      traefik.http.routers.lidarr.entrypoints: websecure
+      traefik.http.services.lidarr.loadbalancer.server.port: 8686

@@ -1,0 +1,21 @@
+services:
+  sonarr:
+    container_name: sonarr
+    image: linuxserver/sonarr:latest
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    user: 568:568
+    volumes:
+      - "${SONARR_PATH}:/config"
+      - "${SHOWS_PATH}:/tv"
+      - "${DOWNLOADS_PATH}:/downloads"
+    env_file:
+      - app.env
+    labels:
+      traefik.enable: true
+      traefik.http.routers.sonarr.rule: "Host(`${SONARR_DOMAIN}`)"
+      traefik.http.routers.sonarr.entrypoints: websecure
+      traefik.http.services.sonarr.loadbalancer.server.port: 8989

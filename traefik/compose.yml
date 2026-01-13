@@ -1,0 +1,78 @@
+name: traefik
+
+volumes:
+  certs:
+
+services:
+  traefik:
+    container_name: traefik
+    image: traefik:v3.4
+    command:
+      - --providers.docker=true
+      - --global.sendanonymoususage=false
+      - --log.level=INFO
+      # Internal API & healthcheck
+      - --ping # Enables the ping endpoint for healthchecking Traefik
+      - --api.dashboard=true # Enables the Traefik dashboard
+      - --api.insecure=true # Exposes API & metrics at port 8080
+      # HTTP entrypoint
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.forwardedheaders.insecure=false
+      - --entrypoints.web.forwardedheaders.trustedips=10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,fc00::/7
+      - --entrypoints.web.proxyprotocol.insecure=false
+      - --entrypoints.web.proxyprotocol.trustedips=10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,fc00::/7
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure # Redirects HTTP requests to HTTPS
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      # HTTPS entrypoint
+      - --entrypoints.websecure.address=:443
+      - --entrypoints.websecure.http.tls=true
+      - --entrypoints.websecure.forwardedheaders.insecure=false
+      - --entrypoints.websecure.forwardedheaders.trustedips=10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,fc00::/7
+      - --entrypoints.websecure.proxyprotocol.insecure=false
+      - --entrypoints.websecure.proxyprotocol.trustedips=10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,fc00::/7
+      - --entrypoints.websecure.http.tls.certresolver=letsencrypt
+      - --entrypoints.websecure.http.tls.domains[0].main=${LE_DOMAIN}
+      - --entrypoints.websecure.http.tls.domains[0].sans=${LE_SAN}
+      # Let's Encrypt ACME configuration
+      - --certificatesresolvers.letsencrypt.acme.email=${LE_EMAIL}
+      - --certificatesresolvers.letsencrypt.acme.dnschallenge.provider=${LE_DNS_PROVIDER}
+      - --certificatesresolvers.letsencrypt.acme.dnschallenge.resolvers=${LE_DNS_RESOLVERS}
+      - --certificatesresolvers.letsencrypt.acme.storage=/data/acme.json
+      # Prometheus metrics
+      - --metrics.addinternals=true # Allows more metrics to be seen by Prometheus
+      - --metrics.prometheus.addEntryPointsLabels
+      - --metrics.prometheus.addRoutersLabels
+      - --metrics.prometheus.addServicesLabels
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 200M
+    ports:
+      - 81:80
+      - 444:443
+    healthcheck:
+      test: traefik healthcheck --ping
+      interval: 60s
+      timeout: 30s
+      retries: 3
+      start_period: 10s
+    volumes:
+      - certs:/data # SSL certs should be persisted across restarts, but don't need to be backed up or made redundant
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    env_file:
+      - .env
+    labels:
+      prometheus.io/scrape: true
+      prometheus.io/path: /metrics
+      prometheus.io/port: 8080
+      prometheus.io/scheme: http
+
+      traefik.http.middlewares.basic-auth.basicauth.users: admin:$$2a$$10$$exyQCQJznXreEzOoZ8E9Q.LRnkuzDv9Q5bAg6jPccr56j087Tu4C6
+      traefik.http.middlewares.intranet-only.ipallowlist.sourcerange: 127.0.0.1,172.16.0.0/16,10.0.0.0/8 # Includes loopback, Docker bridge & internal network
+
+      traefik.enable: true
+      traefik.http.routers.traefik-dashboard.rule: "Host(`${DASHBOARD_DOMAIN}`) && (PathPrefix(`/dashboard`) || PathPrefix(`/api`))"
+      traefik.http.routers.traefik-dashboard.entrypoints: websecure
+      traefik.http.routers.traefik-dashboard.middlewares: intranet-only@docker,basic-auth@docker
+      traefik.http.services.traefik-dashboard.loadbalancer.server.port: 8080

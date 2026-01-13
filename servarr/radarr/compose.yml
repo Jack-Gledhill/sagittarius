@@ -1,0 +1,21 @@
+services:
+  radarr:
+    container_name: radarr
+    image: linuxserver/radarr:latest
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    user: 568:568
+    volumes:
+      - "${RADARR_PATH}/config:/config"
+      - "${MOVIES_PATH}:/movies"
+      - "${DOWNLOADS_PATH}:/downloads"
+    env_file:
+      - app.env
+    labels:
+      traefik.enable: true
+      traefik.http.routers.radarr.rule: "Host(`${RADARR_DOMAIN}`)"
+      traefik.http.routers.radarr.entrypoints: websecure
+      traefik.http.services.radarr.loadbalancer.server.port: 7878

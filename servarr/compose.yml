@@ -1,0 +1,19 @@
+name: servarr
+
+include:
+  - homarr/compose.yml
+  - prowlarr/compose.yml
+  - radarr/compose.yml
+  - sonarr/compose.yml
+  - lidarr/compose.yml
+  - bazarr/compose.yml
+  - unpackerr/compose.yml
+  - recyclarr/compose.yml
+  - cleanuparr/compose.yml
+  - fileflows/compose.yml
+  - qbittorrent/compose.yml
+  - jellyfin/compose.yml
+  - jellyseerr/compose.yml
+  - jellystat/compose.yml
+
+services: {}

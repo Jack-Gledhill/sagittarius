@@ -1,0 +1,66 @@
+services:
+  ext-draw-io:
+    container_name: opencloud-draw-io
+    image: opencloudeu/web-extensions:draw-io-1.0.1
+    env_file:
+      - app.env
+    environment:
+      SOURCE_PATH: /usr/share/nginx/html/apps/draw-io
+    volumes:
+      - "${OPENCLOUD_DATA_PATH}:/var/lib/opencloud"
+    restart: on-failure
+
+  ext-external-sites:
+    container_name: opencloud-external-sites
+    image: opencloudeu/web-extensions:external-sites-1.3.0
+    env_file:
+      - app.env
+    environment:
+      SOURCE_PATH: /usr/share/nginx/html/apps/external-sites
+    volumes:
+      - "${OPENCLOUD_DATA_PATH}:/var/lib/opencloud"
+    restart: on-failure
+
+  ext-json-viewer:
+    container_name: opencloud-json-viewer
+    image: opencloudeu/web-extensions:json-viewer-1.0.2
+    env_file:
+      - app.env
+    environment:
+      SOURCE_PATH: /usr/share/nginx/html/apps/json-viewer
+    volumes:
+      - "${OPENCLOUD_DATA_PATH}:/var/lib/opencloud"
+    restart: on-failure
+
+  ext-maps:
+    container_name: opencloud-maps
+    image: opencloudeu/web-extensions:maps-1.0.2
+    env_file:
+      - app.env
+    environment:
+      SOURCE_PATH: /usr/share/nginx/html/apps/maps
+    volumes:
+      - "${OPENCLOUD_DATA_PATH}:/var/lib/opencloud"
+    restart: on-failure
+
+  ext-progress-bars:
+    container_name: opencloud-progress-bars
+    image: opencloudeu/web-extensions:progress-bars-1.1.0
+    env_file:
+      - app.env
+    environment:
+      SOURCE_PATH: /usr/share/nginx/html/apps/progress-bars
+    volumes:
+      - "${OPENCLOUD_DATA_PATH}:/var/lib/opencloud"
+    restart: on-failure
+
+  ext-unzip:
+    container_name: opencloud-unzip
+    image: opencloudeu/web-extensions:unzip-1.0.4
+    env_file:
+      - app.env
+    environment:
+      SOURCE_PATH: /usr/share/nginx/html/apps/unzip
+    volumes:
+      - "${OPENCLOUD_DATA_PATH}:/var/lib/opencloud"
+    restart: on-failure

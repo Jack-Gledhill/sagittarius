@@ -1,0 +1,19 @@
+services:
+  unpackerr:
+    container_name: unpackerr
+    image: golift/unpackerr:latest
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    user: 568:568
+    volumes:
+      - "${DOWNLOADS_PATH}:/downloads"
+    env_file:
+      - app.env
+    labels:
+      prometheus.io/scrape: true
+      prometheus.io/path: /metrics
+      prometheus.io/port: 5656
+      prometheus.io/scheme: http

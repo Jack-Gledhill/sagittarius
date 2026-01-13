@@ -1,0 +1,32 @@
+services:
+  jellystat:
+    container_name: jellystat
+    image: cyfershepard/jellystat:latest
+    restart: unless-stopped
+    depends_on:
+      - jellystat-postgres
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    env_file:
+      - app.env
+    labels:
+      traefik.enable: true
+      traefik.http.routers.jellystat.rule: "Host(`${JELLYSTAT_DOMAIN}`)"
+      traefik.http.routers.jellystat.entrypoints: websecure
+      traefik.http.services.jellystat.loadbalancer.server.port: 3000
+
+  jellystat-postgres:
+    container_name: jellystat-postgres
+    image: postgres:18-alpine
+    restart: unless-stopped
+    shm_size: 1gb # Jellystat Docker image recommends this be 1GB
+    deploy:
+      resources:
+        limits:
+          memory: 200M
+    env_file:
+      - app.env
+    volumes:
+      - "${JELLYSTAT_DB_PATH}:/var/lib/postgresql/18/docker"

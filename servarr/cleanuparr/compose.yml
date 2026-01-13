@@ -1,0 +1,23 @@
+services:
+  cleanuparr:
+    container_name: cleanuparr
+    image: ghcr.io/cleanuparr/cleanuparr:latest
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:11011/health" ]
+      interval: 30s
+      timeout: 10s
+      start_period: 30s
+      retries: 3
+    volumes:
+      - "${CLEANUPARR_PATH}:/config"
+      - "${DOWNLOADS_PATH}:/downloads"
+    labels:
+      traefik.enable: true
+      traefik.http.routers.cleanuparr.rule: "Host(`${CLEANUPARR_DOMAIN}`)"
+      traefik.http.routers.cleanuparr.entrypoints: websecure
+      traefik.http.services.cleanuparr.loadbalancer.server.port: 11011

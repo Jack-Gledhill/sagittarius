@@ -1,0 +1,19 @@
+services:
+  prowlarr:
+    container_name: prowlarr
+    image: linuxserver/prowlarr:latest
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    user: 568:568
+    volumes:
+      - "${PROWLARR_PATH}:/config"
+    env_file:
+      - app.env
+    labels:
+      traefik.enable: true
+      traefik.http.routers.prowlarr.rule: "Host(`${PROWLARR_DOMAIN}`)"
+      traefik.http.routers.prowlarr.entrypoints: websecure
+      traefik.http.services.prowlarr.loadbalancer.server.port: 9696

@@ -1,0 +1,57 @@
+services:
+  server:
+    container_name: opencloud
+    image: opencloudeu/opencloud-rolling:latest
+    depends_on:
+      clamav:
+        condition: service_healthy
+      tika:
+        condition: service_started
+    entrypoint: [ "/bin/sh", "-c" ]
+    command: [ "opencloud init || true; opencloud server" ]
+    restart: unless-stopped
+    user: 568:568
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+    volumes:
+      - clamav-socket:/var/run/clamav
+      - ./csp.yaml:/etc/opencloud/csp.yaml
+      - ./proxy.yaml:/etc/opencloud/proxy.yaml
+      - "${OPENCLOUD_CONFIG_PATH}:/etc/opencloud"
+      - "${OPENCLOUD_DATA_PATH}:/var/lib/opencloud"
+    env_file:
+      - app.env
+      - server.env
+    labels:
+      traefik.enable: true
+      traefik.http.routers.opencloud.rule: "Host(`${OPENCLOUD_DOMAIN}`)"
+      traefik.http.routers.opencloud.entrypoints: websecure
+      traefik.http.services.opencloud.loadbalancer.server.port: 9200
+
+  wopi:
+    container_name: opencloud-wopi
+    image: opencloudeu/opencloud-rolling:latest
+    depends_on:
+      - opencloud
+      - collabora
+    entrypoint: [ "/bin/sh", "-c" ]
+    command: [ "opencloud collaboration server" ]
+    restart: unless-stopped
+    user: 568:568
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+    volumes:
+      - ./csp.yaml:/etc/opencloud/csp.yaml
+      - ./proxy.yaml:/etc/opencloud/proxy.yaml
+    env_file:
+      - app.env
+      - wopi.env
+    labels:
+      traefik.enable: true
+      traefik.http.routers.wopi.rule: "Host(`${WOPI_DOMAIN}`)"
+      traefik.http.routers.wopi.entrypoints: websecure
+      traefik.http.services.wopi.loadbalancer.server.port: 9300

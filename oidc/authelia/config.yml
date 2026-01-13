@@ -1,0 +1,163 @@
+# --- Extra LDAP attributes
+authentication_backend:
+  ldap:
+    attributes:
+      extra:
+        immichquota:
+          multi_valued: false
+          value_type: integer
+
+# --- Custom user attributes
+definitions:
+  user_attributes:
+    # Determines if user has admin permissions in Immich or not
+    immich_role:
+      expression: '"immich_admin" in groups ? "admin" : "user"'
+
+# --- Access control policies
+# See here for configuration options: https://www.authelia.com/configuration/security/access-control/
+# Note: Access controls here don't apply to OIDC clients, only to the Forward Auth middleware
+access_control:
+  rules:
+    - domain: jellystat.starsystem.dev
+      policy: one_factor
+      subject:
+        - "group:servarr_admin"
+    - domain: cleanuparr.starsystem.dev
+      policy: one_factor
+      subject:
+        - "group:servarr_admin"
+    - domain: fileflows.starsystem.dev
+      policy: one_factor
+      subject:
+        - "group:servarr_admin"
+
+# --- OIDC provider configuration
+identity_providers:
+  oidc:
+    jwks:
+      - key: '{{ secret "/run/secrets/authelia_jwk_key" }}'
+    cors:
+      allowed_origins:
+        - "*"
+    claims_policies:
+      immich:
+        custom_claims:
+          immich_role:
+            attribute: immich_role
+          immich_quota:
+            attribute: immichquota
+    scopes:
+      immich:
+        claims:
+          - immich_role
+          - immich_quota
+    authorization_policies:
+      app:
+        default_policy: one_factor
+        rules:
+          - policy: deny
+            subject: group:services
+      infra:
+        default_policy: two_factor
+        rules:
+          - policy: deny
+            subject: group:services
+      servarr:
+        default_policy: deny
+        rules:
+          - policy: two_factor
+            subject: group:servarr_admin
+    clients:
+      - client_name: Immich
+        client_id: OXbQOKxebCYpXmd7750G~Vj~Jpt23eH1sQYaHJbpG4ScTMVLvfoIAthMaK0ckOk~FHlMIOpk
+        client_secret: $pbkdf2-sha512$310000$zeg0tDo89wwG58QH2w/0kQ$oRsXImubGHmsg9P3Lh4oI0CjOpDrJT1BI2rDi/ihB7w357xGQebFt3MkRL3PBUcJOER./qKmAo9XJXY.yiSPhQ
+        authorization_policy: app
+        redirect_uris:
+          - https://photos.starsystem.dev/auth/login
+          - https://photos.starsystem.dev/user-settings
+          - app.immich:///oauth-callback
+        claims_policy: immich
+        scopes:
+          - openid
+          - profile
+          - email
+          - immich
+        token_endpoint_auth_method: client_secret_post
+      - client_name: OpenCloud Web
+        client_id: tExXzQsV8xDnZl-1haY9bxYxL~QM2K8MnSnjWQOWM43On9EXW_SBa1Avd.XbaNk9h9OSAfY1
+        public: true
+        authorization_policy: app
+        redirect_uris:
+          - https://cloud.starsystem.dev
+          - https://cloud.starsystem.dev/oidc-callback.html
+          - https://cloud.starsystem.dev/oidc-silent-redirect.html
+        scopes:
+          - openid
+          - profile
+          - email
+          - groups
+        response_modes:
+          - form_post
+          - query
+          - fragment
+      - client_name: Gitea
+        client_id: -cH_Xto3yn~M9ntK3Qss9XbF9uJgF63bmizd1XYmBgRxAD6LAUc1dZFzHSNq4aWyiM9ojnf-
+        client_secret: $pbkdf2-sha512$310000$.7OXOWz/o78u2C3FDpRVHw$fc2KQVmbV4k7O4d83WsSowRgWIXdQSs1EvlfifxFsk6rNfR5Q4c9B6C.zVVJl5gRUTE8Z7CncO/UxlmWr1gpUw
+        authorization_policy: app
+        redirect_uris:
+          - https://git.starsystem.dev/user/oauth2/Authelia/callback
+        scopes:
+          - openid
+          - email
+          - profile
+          - groups
+      - client_name: Open WebUI
+        client_id: V81BbniANAlPN~bAatvEnxcx3rIIiTkZNssDhh5u9A5fngorp7__NnIHekizfJj63gyJkR1j
+        client_secret: $pbkdf2-sha512$310000$2egd0vooPxnF6Iqo.VbxNg$xdllQSQAXDK3runnNSdb/v9gEK3i21m/8sb4ckcKUQ7bfatsfeTqag/yaM8U64lGeEP5Fe1dvxuwXGzt6LvKSw
+        authorization_policy: app
+        require_pkce: true
+        pkce_challenge_method: S256
+        redirect_uris:
+          - https://ai.starsystem.dev/oauth/oidc/callback
+        scopes:
+          - openid
+          - profile
+          - groups
+          - email
+      - client_name: Portainer
+        client_id: ACoQEqRaCKxA0.l0tXnJZOvuoVJg0o-8k~YSFq_9eJW8RWOQFRbiCyt~0CGIoMSeXCUVGnza
+        client_secret: $pbkdf2-sha512$310000$fHz5bXXnJfxCC0/FgF3tzQ$bX0/tGnDzxHxeqglCdVmcWx05VRCXaVbDygCSdinDoFwoTdyudQTROvg8si3iHzxBXmX4hPQ2j/cklSFHa/OeA
+        authorization_policy: infra
+        redirect_uris:
+          - https://portainer.starsystem.dev
+        scopes:
+          - openid
+          - profile
+          - groups
+          - email
+        token_endpoint_auth_method: client_secret_post
+      - client_name: Homarr
+        client_id: Orl-CEklac18PX6gJlQva3kVJI1h3ixtFgioKXvVKB3g0bk9eY9uFKjtSyMwZt_60h3iCGTF
+        client_secret: $pbkdf2-sha512$310000$4KWoKtc/AjIk.PlIXJBM9g$fxsNhBHOFHpgXVynXpaeW4fHhdYKbaE9Bvrw/TCug18bcJssuTVMCASl1d/XeKoZ9trd0HLSqYvdvvkXqR7Ccw
+        authorization_policy: app
+        redirect_uris:
+          - https://home.starsystem.dev/api/auth/callback/oidc
+        scopes:
+          - openid
+          - profile
+          - groups
+          - email
+
+# --- Session domains
+session:
+  cookies:
+    - domain: starsystem.dev
+      authelia_url: https://login.starsystem.dev
+
+# --- Server endpoints
+server:
+  endpoints:
+    authz:
+      forward-auth:
+        implementation: ForwardAuth
