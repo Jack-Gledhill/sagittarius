@@ -8,7 +8,7 @@ services:
       tika:
         condition: service_started
     entrypoint: [ "/bin/sh", "-c" ]
-    command: [ "opencloud init || true; opencloud server" ]
+    command: [ "opencloud server" ]
     restart: unless-stopped
     user: 568:568
     deploy:
