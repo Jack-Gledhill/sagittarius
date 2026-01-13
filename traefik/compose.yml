@@ -68,7 +68,6 @@ services:
       prometheus.io/scheme: http
 
       traefik.http.middlewares.basic-auth.basicauth.users: admin:$$2a$$10$$YxTb7Cy41ffQxZAUz/LR9e26yR.4Dk0zaakzyc0UpkC4Hrtmp6aam
-      traefik.http.middlewares.intranet-only.ipallowlist.ipstrategy.depth: 1
       traefik.http.middlewares.intranet-only.ipallowlist.sourcerange: 127.0.0.1,192.168.0.0/16,172.17.0.0/16,172.16.0.0/16,10.0.0.0/8 # Includes loopback, Docker bridge & private networks
 
       traefik.enable: true
