@@ -27,12 +27,6 @@ scrape_configs:
       - targets:
           - host.docker.internal:9835
 
-  # Docker Daemon
-  - job_name: docker
-    static_configs:
-      - targets:
-          - host.docker.internal:9323
-
   # Docker Service Discovery
   - job_name: containers
     docker_sd_configs:
