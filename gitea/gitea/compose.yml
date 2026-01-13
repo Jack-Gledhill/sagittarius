@@ -1,7 +1,7 @@
 services:
   gitea:
     container_name: gitea
-    image: docker.io/gitea/gitea:latest
+    image: docker.io/gitea/gitea:latest-rootless
     depends_on:
       - gitea-postgres
     restart: unless-stopped
@@ -62,3 +62,5 @@ services:
       - "--icon-url=${OIDC_ISSUER_URL}/favicon.ico"
     volumes:
       - "${DATA_PATH}:/data"
+    env_file:
+      - gitea.env
