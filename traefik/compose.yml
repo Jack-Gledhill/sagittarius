@@ -23,8 +23,6 @@ services:
     restart: unless-stopped
     ports:
       - 82:80
-    networks:
-      - proxy
     labels:
       traefik.enable: true
       traefik.http.routers.whoami.rule: "Host(`${WHOAMI_DOMAIN}`)"
@@ -76,8 +74,6 @@ services:
       resources:
         limits:
           memory: 200M
-    networks:
-      - proxy
     ports:
       - 81:80
       - 444:443
