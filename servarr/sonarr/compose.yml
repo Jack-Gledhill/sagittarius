@@ -8,6 +8,9 @@ services:
         limits:
           memory: 500M
     user: 568:568
+    networks:
+      - default
+      - proxy
     volumes:
       - "${SONARR_PATH}:/config"
       - "${SHOWS_PATH}:/tv"

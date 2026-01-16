@@ -8,6 +8,9 @@ services:
       - "${BAZARR_PATH}:/config"
       - "${MOVIES_PATH}:/movies"
       - "${SHOWS_PATH}:/tv"
+    networks:
+      - default
+      - proxy
     env_file:
       - app.env
     labels:

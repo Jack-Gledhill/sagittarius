@@ -16,4 +16,11 @@ include:
   - jellyseerr/compose.yml
   - jellystat/compose.yml
 
+networks:
+  default:
+    name: servarr
+  proxy:
+    name: proxy
+    external: true
+
 services: {}

@@ -26,6 +26,9 @@ services:
           memory: 500M
     devices:
       - /dev/net/tun:/dev/net/tun
+    networks:
+      - default
+      - proxy
     env_file:
       - gluetun.env
     labels:

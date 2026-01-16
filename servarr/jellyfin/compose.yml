@@ -16,6 +16,9 @@ services:
               count: all
               capabilities: [ gpu ]
     user: 568:568
+    networks:
+      - default
+      - proxy
     volumes:
       - jellyfin-cache:/cache
       - "${JELLYFIN_CONFIG_PATH}:/config"
