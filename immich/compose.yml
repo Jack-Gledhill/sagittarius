@@ -3,10 +3,20 @@ name: immich
 volumes:
   ml-cache:
 
+networks:
+  default:
+    name: immich
+  proxy:
+    name: proxy
+    external: true
+
 services:
   immich:
     container_name: immich
     image: ghcr.io/immich-app/immich-server:v2
+    networks:
+      - default
+      - proxy
     environment:
       IMMICH_TELEMETRY_INCLUDE: all
       IMMICH_MACHINE_LEARNING_URL: http://machine-learning:3003
