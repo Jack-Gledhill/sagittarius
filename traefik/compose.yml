@@ -43,8 +43,8 @@ services:
       - --api.insecure=true # Exposes API & metrics at port 8080
       # HTTP entrypoint
       - --entrypoints.web.address=:80
-      - --entrypoints.web.forwardedheaders.insecure=false
-      - --entrypoints.web.forwardedheaders.trustedips=10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,fc00::/7
+      - --entrypoints.web.forwardedheaders.insecure=true
+#      - --entrypoints.web.forwardedheaders.trustedips=10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,fc00::/7
       - --entrypoints.web.proxyprotocol.insecure=false
       - --entrypoints.web.proxyprotocol.trustedips=10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,fc00::/7
       - --entrypoints.web.http.redirections.entrypoint.to=websecure # Redirects HTTP requests to HTTPS
@@ -52,8 +52,8 @@ services:
       # HTTPS entrypoint
       - --entrypoints.websecure.address=:443
       - --entrypoints.websecure.http.tls=true
-      - --entrypoints.websecure.forwardedheaders.insecure=false
-      - --entrypoints.websecure.forwardedheaders.trustedips=10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,fc00::/7
+      - --entrypoints.websecure.forwardedheaders.insecure=true
+#      - --entrypoints.websecure.forwardedheaders.trustedips=10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,fc00::/7
       - --entrypoints.websecure.proxyprotocol.insecure=false
       - --entrypoints.websecure.proxyprotocol.trustedips=10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,fc00::/7
       - --entrypoints.websecure.http.tls.certresolver=letsencrypt
