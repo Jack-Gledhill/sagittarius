@@ -9,6 +9,9 @@ services:
       resources:
         limits:
           memory: 500M
+    networks:
+      - default
+      - proxy
     ports:
       - "2222:2222"
     volumes:

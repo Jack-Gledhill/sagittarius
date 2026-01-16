@@ -3,4 +3,11 @@ name: gitea
 include:
   - gitea/compose.yml
 
+networks:
+  default:
+    name: gitea
+  proxy:
+    name: proxy
+    external: true
+
 services: {}
