@@ -12,8 +12,8 @@ networks:
       driver: default
       config:
         # 253 usable addresses
-        - subnet: 172.17.1.0/16
-          ip_range: 172.17.1.0/16
+        - subnet: 172.17.1.0/24
+          ip_range: 172.17.1.0/24
           gateway: 172.17.1.1
 
 services:
