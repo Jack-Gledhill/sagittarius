@@ -35,6 +35,9 @@ services:
       - authelia_session_secret
       - authelia_storage_encryption_key
       - smtp_password
+    networks:
+      - default
+      - proxy
     env_file:
       - app.env
     labels:

@@ -1,4 +1,4 @@
-name: oidc
+name: auth
 
 secrets:
   smtp_password:
@@ -7,5 +7,12 @@ secrets:
 include:
   - lldap/compose.yml
   - authelia/compose.yml
+
+networks:
+  default:
+    name: auth
+  proxy:
+    name: proxy
+    external: true
 
 services: {}
