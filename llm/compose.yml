@@ -1,0 +1,14 @@
+name: llm
+
+include:
+  - ollama/compose.yml
+  - open-webui/compose.yml
+
+networks:
+  default:
+    name: llm
+  proxy:
+    name: proxy
+    external: true
+
+services: {}
