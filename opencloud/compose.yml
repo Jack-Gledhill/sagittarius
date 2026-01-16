@@ -8,4 +8,11 @@ include:
   - web-extensions/compose.yml
   - opencloud/compose.yml
 
+networks:
+  default:
+    name: servarr
+  proxy:
+    name: proxy
+    external: true
+
 services: {}
