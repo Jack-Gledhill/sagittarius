@@ -75,8 +75,12 @@ services:
         limits:
           memory: 200M
     ports:
-      - 81:80
-      - 444:443
+      - target: 80
+        published: 81
+        mode: host
+      - target: 443
+        published: 444
+        mode: host
     healthcheck:
       test: traefik healthcheck --ping
       interval: 60s
