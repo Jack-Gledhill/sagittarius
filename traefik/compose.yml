@@ -3,6 +3,19 @@ name: traefik
 volumes:
   certs:
 
+networks:
+  default:
+    name: proxy
+    attachable: true
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        # 253 usable addresses
+        - subnet: 172.17.1.0/16
+          ip_range: 172.17.1.0/16
+          gateway: 172.17.1.1
+
 services:
   whoami:
     container_name: traefik-whoami
@@ -10,9 +23,12 @@ services:
     restart: unless-stopped
     ports:
       - 82:80
+    networks:
+      - proxy
     labels:
       traefik.enable: true
       traefik.http.routers.whoami.rule: "Host(`${WHOAMI_DOMAIN}`)"
+      traefik.http.services.whoami.loadbalancer.server.port: 80
 
   traefik:
     container_name: traefik
@@ -20,6 +36,7 @@ services:
     command:
       - --providers.docker=true
       - --providers.docker.exposedbydefault=false
+      - --providers.docker.network=proxy
       - --global.sendanonymoususage=false
       - --log.level=DEBUG
       # Internal API & healthcheck
@@ -59,6 +76,8 @@ services:
       resources:
         limits:
           memory: 200M
+    networks:
+      - proxy
     ports:
       - 81:80
       - 444:443
@@ -81,7 +100,7 @@ services:
 
       traefik.http.middlewares.basic-auth.basicauth.users: admin:$$2a$$10$$YxTb7Cy41ffQxZAUz/LR9e26yR.4Dk0zaakzyc0UpkC4Hrtmp6aam
       # TODO: this won't work, find another way to block external clients
-      traefik.http.middlewares.intranet-only.ipallowlist.sourcerange: 127.0.0.1,172.16.0.0/12,192.168.0.0/16,10.0.0.0/8 # Includes loopback, Docker bridge & private networks
+      traefik.http.middlewares.intranet-only.ipallowlist.sourcerange: 127.0.0.1,172.16.0.0/12,192.168.0.0/16,10.0.0.0/8 # Includes loopback & private networks
 
       traefik.enable: true
       traefik.http.routers.traefik-dashboard.rule: "Host(`${DASHBOARD_DOMAIN}`) && (PathPrefix(`/dashboard`) || PathPrefix(`/api`))"
