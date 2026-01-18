@@ -37,10 +37,12 @@ scrape_configs:
         filters:
           # Only discover containers in the metrics network
           - name: network
-            values: metrics
+            values:
+              - metrics
           # Only discover containers with the prometheus.io/scrape=true label
           - name: label
-            values: prometheus.io/scrape=true
+            values:
+              - prometheus.io/scrape=true
     relabel_configs:
       # --- Filter out non-matching ports
       - source_labels: [ __meta_docker_container_label_prometheus_io_port ]
