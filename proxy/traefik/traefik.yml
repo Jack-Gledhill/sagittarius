@@ -60,7 +60,7 @@ providers:
     network: proxy
     watch: true
   file:
-    filename: /etc/traefik/middleware.yml
+    filename: /etc/traefik/middlewares.yml
 
 certificatesResolvers:
   letsEncrypt:
