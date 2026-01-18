@@ -59,7 +59,6 @@ scrape_configs:
       # --- Merge container's IP on the network and port
       - source_labels: [ __meta_docker_network_ip, __meta_docker_container_label_prometheus_io_port ]
         target_label: __address__
-        regex: "172\.17\.2\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?);(\d+)" # Matches 172.17.2.x:port
         action: replace
         replacement: "$1:$2"
       # --- Add metadata labels
