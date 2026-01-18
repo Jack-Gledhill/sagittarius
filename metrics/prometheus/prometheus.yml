@@ -6,6 +6,8 @@ scrape_configs:
   # Scrape self
   - job_name: prometheus
     scheme: https
+    tls_config:
+      insecure_skip_verify: true
     static_configs:
       - targets:
           - localhost:9090
@@ -53,11 +55,6 @@ scrape_configs:
       - source_labels: [ __meta_docker_container_label_prometheus_io_port ]
         target_label: __meta_docker_port_private
         action: keepequal
-      # --- Merge container's IP on the network and port
-      - source_labels: [ __meta_docker_network_ip, __meta_docker_container_label_prometheus_io_port ]
-        target_label: __address__
-        action: replace
-        replacement: "$1:$2"
       # --- Apply scheme override if given
       - source_labels: [ __meta_docker_container_label_prometheus_io_scheme ]
         target_label: __scheme__
