@@ -5,6 +5,7 @@ global:
 scrape_configs:
   # Scrape self
   - job_name: prometheus
+    scheme: https
     static_configs:
       - targets:
           - localhost:9090
