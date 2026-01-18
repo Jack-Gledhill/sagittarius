@@ -5,6 +5,7 @@ services:
     command:
       - --config.file=/etc/prometheus/prometheus.yml
       - --web.config.file=/etc/prometheus/web.yml
+      - --storage.tsdb.path=/prometheus
     restart: unless-stopped
     deploy:
       resources:
@@ -18,10 +19,9 @@ services:
       start_period: 40s
     ports:
       - "9090:9090"
-    secrets:
-      - ssl_cert
-      - ssl_key
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-      - ./web.yml:/etc/prometheus/web.yml
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./web.yml:/etc/prometheus/web.yml:ro
+      - "${TLS_CERT_PATH}:/etc/ssl/cert.pem:ro"
+      - "${TLS_KEY_PATH}:/etc/ssl/key.pem:ro"
       - /var/run/docker.sock:/var/run/docker.sock:ro # Used for Docker service discovery

@@ -3,5 +3,5 @@ basic_auth_users:
   grafana: "$2a$10$xwd4YLAgS9aUGpLIygmlduPDlbKa0BKMNyhPZiDihE7tIPIb.zE4O"
 
 tls_server_config:
-  cert_file: /run/secrets/ssl_cert
-  key_file: /run/secrets/ssl_key
+  cert_file: /etc/ssl/cert.pem
+  key_file: /etc/ssl/key.pem

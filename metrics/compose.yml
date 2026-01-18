@@ -7,12 +7,6 @@ include:
   - prometheus/compose.yml
   - grafana/compose.yml
 
-secrets:
-  ssl_cert:
-    file: "${TLS_CERT_PATH}"
-  ssl_key:
-    file: "${TLS_KEY_PATH}"
-
 networks:
   default:
     name: metrics
