@@ -1,3 +1,6 @@
+volumes:
+  prometheus-data:
+
 services:
   prometheus:
     container_name: prometheus
@@ -6,7 +9,7 @@ services:
     command:
       - --config.file=/etc/prometheus/prometheus.yml
       - --web.config.file=/etc/prometheus/web.yml
-      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.path=/data
     restart: unless-stopped
     deploy:
       resources:
@@ -23,6 +26,7 @@ services:
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - ./web.yml:/etc/prometheus/web.yml:ro
+      - prometheus-data:/data
       - "${TLS_CERT_PATH}:/etc/ssl/cert.pem:ro"
       - "${TLS_KEY_PATH}:/etc/ssl/key.pem:ro"
       - /var/run/docker.sock:/var/run/docker.sock:ro # Used for Docker service discovery
