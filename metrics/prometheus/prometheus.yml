@@ -45,10 +45,19 @@ scrape_configs:
             values:
               - prometheus.io/scrape=true
     relabel_configs:
+      # --- Filter out other networks
+      - source_labels: [ __meta_docker_network_name ]
+        regex: "metrics"
+        action: keep
       # --- Filter out non-matching ports
       - source_labels: [ __meta_docker_container_label_prometheus_io_port ]
         target_label: __meta_docker_port_private
         action: keepequal
+      # --- Merge container's IP on the network and port
+      - source_labels: [ __meta_docker_network_ip, __meta_docker_container_label_prometheus_io_port ]
+        target_label: __address__
+        action: replace
+        replacement: "$1:$2"
       # --- Apply scheme override if given
       - source_labels: [ __meta_docker_container_label_prometheus_io_scheme ]
         target_label: __scheme__
@@ -59,11 +68,6 @@ scrape_configs:
         target_label: __metrics_path__
         regex: "(.+)"
         action: replace
-      # --- Merge container's IP on the network and port
-      - source_labels: [ __meta_docker_network_ip, __meta_docker_container_label_prometheus_io_port ]
-        target_label: __address__
-        action: replace
-        replacement: "$1:$2"
       # --- Add metadata labels
       - source_labels: [ __meta_docker_container_name ]
         target_label: container_name
