@@ -17,5 +17,4 @@ services:
     labels:
       traefik.enable: true
       traefik.http.routers.open-webui.rule: "Host(`${OPENWEBUI_DOMAIN}`)"
-      traefik.http.routers.open-webui.entrypoints: websecure
       traefik.http.services.open-webui.loadbalancer.server.port: 8080

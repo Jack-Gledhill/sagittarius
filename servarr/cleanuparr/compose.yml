@@ -22,5 +22,4 @@ services:
     labels:
       traefik.enable: true
       traefik.http.routers.cleanuparr.rule: "Host(`${CLEANUPARR_DOMAIN}`)"
-      traefik.http.routers.cleanuparr.entrypoints: websecure
       traefik.http.services.cleanuparr.loadbalancer.server.port: 11011

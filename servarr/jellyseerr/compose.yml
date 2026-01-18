@@ -25,7 +25,6 @@ services:
     labels:
       traefik.enable: true
       traefik.http.routers.jellyseerr.rule: "Host(`${JELLYSEERR_DOMAIN}`)"
-      traefik.http.routers.jellyseerr.entrypoints: websecure
       traefik.http.services.jellyseerr.loadbalancer.server.port: 5055
 
   jellyseerr-postgres:

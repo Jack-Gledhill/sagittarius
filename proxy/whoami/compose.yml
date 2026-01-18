@@ -1,0 +1,9 @@
+services:
+  whoami:
+    container_name: traefik-whoami
+    image: traefik/whoami
+    restart: unless-stopped
+    labels:
+      traefik.enable: true
+      traefik.http.routers.whoami.rule: "Host(`${WHOAMI_DOMAIN}`)"
+      traefik.http.services.whoami.loadbalancer.server.port: 80

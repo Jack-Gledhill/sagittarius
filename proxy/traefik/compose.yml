@@ -1,0 +1,43 @@
+volumes:
+  access_logs:
+  acme:
+
+services:
+  traefik:
+    container_name: traefik
+    image: traefik:v3.6
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - default
+      - metrics
+    healthcheck:
+      test: traefik healthcheck --ping
+      interval: 60s
+      timeout: 30s
+      retries: 3
+      start_period: 10s
+    volumes:
+      - ./traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./middlewares.yml:/etc/traefik/middlewares.yml:ro
+      - access_logs:/logs
+      - acme:/data
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    env_file:
+      - app.env
+    labels:
+      prometheus.io/scrape: true
+      prometheus.io/path: /metrics
+      prometheus.io/port: 8080
+      prometheus.io/scheme: http
+
+      traefik.enable: true
+      traefik.http.routers.dashboard.rule: "Host(`${DASHBOARD_DOMAIN}`)"
+      traefik.http.routers.dashboard.service: api@internal
+      traefik.http.routers.dashboard.middlewares: intranet-only@file,basic-auth@file

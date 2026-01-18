@@ -15,7 +15,6 @@ services:
     labels:
       traefik.enable: true
       traefik.http.routers.homarr.rule: "Host(`${HOMARR_DOMAIN}`)"
-      traefik.http.routers.homarr.entrypoints: websecure
       traefik.http.services.homarr.loadbalancer.server.port: 7575
 
   homarr-postgres:

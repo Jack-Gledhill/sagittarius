@@ -18,5 +18,4 @@ services:
     labels:
       traefik.enable: true
       traefik.http.routers.prowlarr.rule: "Host(`${PROWLARR_DOMAIN}`)"
-      traefik.http.routers.prowlarr.entrypoints: websecure
       traefik.http.services.prowlarr.loadbalancer.server.port: 9696

@@ -6,8 +6,6 @@ services:
     container_name: ollama
     image: ollama/ollama:0.13.5
     user: 0:0
-    networks:
-      - default
     environment:
       OLLAMA_VULKAN: 1
       OLLAMA_HOST: 0.0.0.0:11434

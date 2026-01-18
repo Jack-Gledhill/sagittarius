@@ -16,5 +16,4 @@ services:
     labels:
       traefik.enable: true
       traefik.http.routers.bazarr.rule: "Host(`${BAZARR_DOMAIN}`)"
-      traefik.http.routers.bazarr.entrypoints: websecure
       traefik.http.services.bazarr.loadbalancer.server.port: 6767

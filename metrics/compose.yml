@@ -1,10 +1,24 @@
 name: metrics
 
 include:
-  - node-exporter/compose.yml
-  - gpu-exporter/compose.yml
-  - zfs-exporter/compose.yml
+#  - node-exporter/compose.yml
+#  - gpu-exporter/compose.yml
+#  - zfs-exporter/compose.yml
   - prometheus/compose.yml
   - grafana/compose.yml
+
+secrets:
+  ssl_cert:
+    file: "${TLS_CERT_PATH}"
+  ssl_key:
+    file: "${TLS_KEY_PATH}"
+
+networks:
+  default:
+    name: metrics
+    external: true
+  proxy:
+    name: proxy
+    external: true
 
 services: {}

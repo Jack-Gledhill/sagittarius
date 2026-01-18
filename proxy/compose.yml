@@ -1,0 +1,15 @@
+name: proxy
+
+networks:
+  default:
+    name: proxy
+    external: true
+  metrics:
+    name: metrics
+    external: true
+
+include:
+  - traefik/compose.yml
+  - whoami/compose.yml
+
+services: {}

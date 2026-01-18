@@ -3,7 +3,7 @@ global:
   scrape_timeout: 5s
 
 scrape_configs:
-  # Scrape itself
+  # Scrape self
   - job_name: prometheus
     static_configs:
       - targets:
@@ -31,27 +31,41 @@ scrape_configs:
   - job_name: containers
     docker_sd_configs:
       - host: unix:///var/run/docker.sock
+        match_first_network: false # Needed to filter out other networks
+        # See here for list of filters supported by Docker API:
+        # https://docs.docker.com/reference/api/engine/version/v1.52/#tag/Container/operation/ContainerList
+        filters:
+          # Only discover containers in the metrics network
+          - name: network
+            values: metrics
+          # Only discover containers with the prometheus.io/scrape=true label
+          - name: label
+            values: prometheus.io/scrape=true
     relabel_configs:
-      # Only scrape containers with the label `prometheus.io/scrape=true`
-      - source_labels: [__meta_docker_container_label_prometheus_io_scrape]
-        regex: "true"
-        action: keep
-      - source_labels: [__meta_docker_container_label_prometheus_io_scheme]
+      # --- Filter out non-matching ports
+      - source_labels: [ __meta_docker_container_label_prometheus_io_port ]
+        target_label: __meta_docker_port_private
+        action: keepequal
+      # --- Apply scheme override if given
+      - source_labels: [ __meta_docker_container_label_prometheus_io_scheme ]
         target_label: __scheme__
-        regex: (https?)
+        regex: "(https?)"
         action: replace
-      - source_labels: [__meta_docker_container_label_prometheus_io_path]
+      # --- Apply metrics path override if given
+      - source_labels: [ __meta_docker_container_label_prometheus_io_path ]
         target_label: __metrics_path__
-        regex: (.+)
+        regex: "(.+)"
         action: replace
-      - source_labels: [__address__, __meta_docker_container_label_prometheus_io_port]
+      # --- Merge container's IP on the network and port
+      - source_labels: [ __meta_docker_network_ip, __meta_docker_container_label_prometheus_io_port ]
         target_label: __address__
-        regex: ([^:]+)(?::\d+)?;(\d+)
+        regex: "172.17.2.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?);(\d+)" # Matches 172.17.2.x:port
         action: replace
-        replacement: $1:$2
-      - source_labels: [__meta_docker_container_name]
+        replacement: "$1:$2"
+      # --- Add metadata labels
+      - source_labels: [ __meta_docker_container_name ]
         target_label: container_name
         action: replace
-      - source_labels: [__meta_docker_container_id]
+      - source_labels: [ __meta_docker_container_id ]
         target_label: container_id
         action: replace

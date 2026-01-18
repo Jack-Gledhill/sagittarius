@@ -19,7 +19,6 @@ services:
     labels:
       traefik.enable: true
       traefik.http.routers.gitea.rule: "Host(`${DOMAIN}`)"
-      traefik.http.routers.gitea.entrypoints: websecure
       traefik.http.services.gitea.loadbalancer.server.port: 3000
     env_file:
       - gitea.env

@@ -1,0 +1,74 @@
+http:
+  middlewares:
+    default:
+      chain:
+        middlewares:
+          - inflight-limit@file
+          - rate-limit@file
+          - overload-backoff@file
+          - retry-failed@file
+          - cors@file
+
+    # Set CORS headers for cross-origin requests
+    cors:
+      headers:
+        addVaryHeader: true
+        accessControlAllowMethods:
+          - GET
+          - PUT
+          - POST
+          - PATCH
+          - DELETE
+          - OPTIONS
+          - HEAD
+        accessControlAllowHeaders: "*"
+        accessControlAllowCredentials: true
+        accessControlAllowOriginList:
+          - home.starsystem.dev
+    # Require basic authentication before allowing access
+    basic-auth:
+      basicAuth:
+        users:
+          - "truenas_admin:$2a$10$hyyEbuZCnjdo15lqqXpEGuMMTEseWT7F9Ricm1TLq5SkKASMSjp.m"
+    # Pass clients to Authelia for authentication
+    forward-auth:
+      forwardAuth:
+        address: http://authelia:9091/api/authz/forward-auth
+        trustForwardHeader: true
+        authResponseHeaders:
+          - Remote-User
+          - Remote-Groups
+          - Remote-Email
+          - Remote-Name
+    # Only allow internal clients
+    intranet-only:
+      ipAllowList:
+        sourceRange:
+          - 127.0.0.1/8    # Loopback network
+          - 10.0.0.0/8     # Constellation network
+          - 172.16.0.0/12  # Docker network
+          - 192.168.0.0/16 # Home network
+          - 193.28.39.4/32 # Public IP
+    # Open circuit breaker when more than 50% of requests exceed 500ms latency over 10s
+    overload-backoff:
+      circuitBreaker:
+        expression: "LatencyAtQuantileMS(50.0) > 500"
+        checkPeriod: 10s
+        fallbackDuration: 30s
+        recoveryDuration: 10s
+        responseCode: 503
+    # Retry failed requests with an exponential backoff
+    retry-failed:
+      retry:
+        attempts: 3
+        initialInterval: 500ms
+    # Limit allowed simultaneous connections per client
+    inflight-limit:
+      inFlightReq:
+        amount: 10
+    # Limit each client to 25 requests per second
+    rate-limit:
+      rateLimit:
+        average: 25
+        period: 1s
+        burst: 10

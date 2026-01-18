@@ -30,7 +30,6 @@ services:
     labels:
       traefik.enable: true
       traefik.http.routers.opencloud.rule: "Host(`${OPENCLOUD_DOMAIN}`)"
-      traefik.http.routers.opencloud.entrypoints: websecure
       traefik.http.services.opencloud.loadbalancer.server.port: 9200
 
   wopi:
@@ -59,5 +58,4 @@ services:
     labels:
       traefik.enable: true
       traefik.http.routers.wopi.rule: "Host(`${WOPI_DOMAIN}`)"
-      traefik.http.routers.wopi.entrypoints: websecure
       traefik.http.services.wopi.loadbalancer.server.port: 9300

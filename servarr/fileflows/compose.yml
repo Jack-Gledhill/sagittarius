@@ -28,5 +28,4 @@ services:
     labels:
       traefik.enable: true
       traefik.http.routers.fileflows.rule: "Host(`${FILEFLOWS_DOMAIN}`)"
-      traefik.http.routers.fileflows.entrypoints: websecure
       traefik.http.services.fileflows.loadbalancer.server.port: 5000

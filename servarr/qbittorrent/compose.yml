@@ -34,5 +34,4 @@ services:
     labels:
       traefik.enable: true
       traefik.http.routers.qbittorrent.rule: "Host(`${QBITTORRENT_DOMAIN}`)"
-      traefik.http.routers.qbittorrent.entrypoints: websecure
       traefik.http.services.qbittorrent.loadbalancer.server.port: 8080

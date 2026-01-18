@@ -20,5 +20,4 @@ services:
     labels:
       traefik.enable: true
       traefik.http.routers.lidarr.rule: "Host(`${LIDARR_DOMAIN}`)"
-      traefik.http.routers.lidarr.entrypoints: websecure
       traefik.http.services.lidarr.loadbalancer.server.port: 8686

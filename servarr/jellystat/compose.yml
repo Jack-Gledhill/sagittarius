@@ -17,7 +17,6 @@ services:
     labels:
       traefik.enable: true
       traefik.http.routers.jellystat.rule: "Host(`${JELLYSTAT_DOMAIN}`)"
-      traefik.http.routers.jellystat.entrypoints: websecure
       traefik.http.services.jellystat.loadbalancer.server.port: 3000
 
   jellystat-postgres:

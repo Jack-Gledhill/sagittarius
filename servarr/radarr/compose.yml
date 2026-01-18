@@ -20,5 +20,4 @@ services:
     labels:
       traefik.enable: true
       traefik.http.routers.radarr.rule: "Host(`${RADARR_DOMAIN}`)"
-      traefik.http.routers.radarr.entrypoints: websecure
       traefik.http.services.radarr.loadbalancer.server.port: 7878
