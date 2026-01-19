@@ -1,3 +1,9 @@
+secrets:
+  tls_cert:
+    file: "${TLS_CERT_PATH}"
+  tls_key:
+    file: "${TLS_KEY_PATH}"
+
 services:
   prometheus:
     container_name: prometheus
@@ -20,9 +26,10 @@ services:
       start_period: 40s
     ports:
       - "9090:9090"
+    secrets:
+      - tls_cert
+      - tls_key
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - ./web.yml:/etc/prometheus/web.yml
-      - "${TLS_CERT_PATH}:/etc/ssl/cert.pem:ro"
-      - "${TLS_KEY_PATH}:/etc/ssl/key.pem:ro"
       - /var/run/docker.sock:/var/run/docker.sock:ro # Used for Docker service discovery
