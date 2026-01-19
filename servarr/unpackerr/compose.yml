@@ -11,6 +11,8 @@ services:
     networks:
       - default
       - metrics
+    expose:
+      - "5656"
     volumes:
       - "${DOWNLOADS_PATH}:/downloads"
     env_file:

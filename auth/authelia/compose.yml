@@ -39,6 +39,8 @@ services:
       - default
       - proxy
       - metrics
+    expose:
+      - "9959"
     env_file:
       - app.env
     labels:

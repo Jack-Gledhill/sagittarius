@@ -21,6 +21,8 @@ services:
       - default
       - proxy
       - metrics
+    expose:
+      - "8081"
     environment:
       IMMICH_TELEMETRY_INCLUDE: all
       IMMICH_MACHINE_LEARNING_URL: http://machine-learning:3003
