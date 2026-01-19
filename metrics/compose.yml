@@ -3,7 +3,6 @@ name: metrics
 include:
   - node-exporter/compose.yml
 #  - gpu-exporter/compose.yml
-#  - zfs-exporter/compose.yml
   - prometheus/compose.yml
   - grafana/compose.yml
 
