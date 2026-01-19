@@ -38,6 +38,7 @@ services:
     networks:
       - default
       - proxy
+      - metrics
     env_file:
       - app.env
     labels:

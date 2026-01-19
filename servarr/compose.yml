@@ -22,5 +22,8 @@ networks:
   proxy:
     name: proxy
     external: true
+  metrics:
+    name: metrics
+    external: true
 
 services: {}

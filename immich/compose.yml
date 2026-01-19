@@ -9,6 +9,9 @@ networks:
   proxy:
     name: proxy
     external: true
+  metrics:
+    name: metrics
+    external: true
 
 services:
   immich:
@@ -17,6 +20,7 @@ services:
     networks:
       - default
       - proxy
+      - metrics
     environment:
       IMMICH_TELEMETRY_INCLUDE: all
       IMMICH_MACHINE_LEARNING_URL: http://machine-learning:3003
