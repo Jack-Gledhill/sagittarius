@@ -4,6 +4,8 @@ services:
     image: quay.io/prometheus/node-exporter:latest
     command:
       - --path.rootfs=/host
+      - --path.procfs=/host/proc
+      - --path.sysfs=/host/sys
       - --no-collector.wifi
       - --no-collector.hwmon
       - --collector.filesystem.ignored-mount-points=^/(dev|proc|sys|var/lib/docker/.+|var/lib/kubelet/pods/.+)($|/)
@@ -12,5 +14,9 @@ services:
     restart: unless-stopped
     pid: host
     network_mode: host
+    expose:
+      - "9100"
     volumes:
       - /:/host:ro,rslave
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
