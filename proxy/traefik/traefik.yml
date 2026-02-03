@@ -101,8 +101,8 @@ entryPoints:
     address: ":443"
     asDefault: true
     http:
-      middlewares:
-        - default@file
+#      middlewares:
+#        - default@file
       tls:
         certResolver: letsEncrypt
         domains:
