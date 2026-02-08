@@ -76,7 +76,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 4G
+          memory: 12G
         # Enables hardware acceleration
         reservations:
           devices:
