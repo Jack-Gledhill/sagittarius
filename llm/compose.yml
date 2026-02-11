@@ -3,6 +3,7 @@ name: llm
 include:
   - ollama/compose.yml
   - open-webui/compose.yml
+  - grokbot/compose.yml
 
 networks:
   default:

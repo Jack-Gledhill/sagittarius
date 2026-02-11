@@ -1,0 +1,13 @@
+services:
+  grokbot:
+    container_name: grokbot
+    image: ghcr.io/thejmfc/grokbot:latest
+    depends_on:
+      - ollama
+    env_file:
+      - app.env
+    deploy:
+      resources:
+        limits:
+          memory: 100M
+    restart: unless-stopped
