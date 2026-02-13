@@ -1,0 +1,15 @@
+services:
+  novnc:
+    container_name: ros2-novnc
+    image: theasp/novnc:latest
+    env_file:
+      - app.env
+    networks:
+      - default
+      - proxy
+    restart: unless-stopped
+    labels:
+      traefik.enable: true
+      traefik.http.routers.ros2-novnc.rule: "Host(`${NOVNC_DOMAIN}`)"
+      traefik.http.services.ros2-novnc.loadbalancer.server.port: 8080
+      traefik.http.routers.ros2-novnc.middlewares: intranet-only@file,basic-auth@file

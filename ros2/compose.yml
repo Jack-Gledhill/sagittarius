@@ -1,0 +1,14 @@
+name: ros2
+
+include:
+  - ros2/compose.yml
+  - novnc/compose.yml
+
+networks:
+  default:
+    name: ros2
+  proxy:
+    name: proxy
+    external: true
+
+services: {}
